@@ -1,87 +1,87 @@
-# Claude Code Settings Reference
+# Claude Code 设置参考
 
-![Last Updated](https://img.shields.io/badge/Last_Updated-Mar%2031%2C%202026%207%3A02%20PM%20PKT-white?style=flat&labelColor=555) ![Version](https://img.shields.io/badge/Claude_Code-v2.1.88-blue?style=flat&labelColor=555)
+![最后更新](https://img.shields.io/badge/Last_Updated-Mar%2031%2C%202026%207%3A02%20PM%20PKT-white?style=flat&labelColor=555) ![版本](https://img.shields.io/badge/Claude_Code-v2.1.88-blue?style=flat&labelColor=555)
 
-A comprehensive guide to all available configuration options in Claude Code's `settings.json` files. As of v2.1.88, Claude Code exposes **60+ settings** and **100+ environment variables** (use the `"env"` field in `settings.json` to avoid wrapper scripts).
+Claude Code `settings.json` 文件中所有可用配置选项的全面指南。截至 v2.1.88，Claude Code 暴露了 all available configuration options in Claude Code's `settings.json` files. 截至 v2.1.88，Claude Code 暴露了 **60+ 个设置**和 **100+ 个环境变量** (use the `"env"` field in `settings.json` to avoid wrapper scripts).
 
 <table width="100%">
 <tr>
-<td><a href="../">← Back to Claude Code Best Practice</a></td>
+<td><a href="../">← 返回 Claude Code 最佳实践</a></td>
 <td align="right"><img src="../!/claude-jumping.svg" alt="Claude" width="60" /></td>
 </tr>
 </table>
 
-## Table of Contents
+## 目录
 
-1. [Settings Hierarchy](#settings-hierarchy)
-2. [Core Configuration](#core-configuration)
-3. [Permissions](#permissions)
-4. [Hooks](#hooks)
-5. [MCP Servers](#mcp-servers)
-6. [Sandbox](#sandbox)
-7. [Plugins](#plugins)
-8. [Model Configuration](#model-configuration)
-9. [Display & UX](#display--ux)
-10. [AWS & Cloud Credentials](#aws--cloud-credentials)
-11. [Environment Variables](#environment-variables-via-env)
-12. [Useful Commands](#useful-commands)
+1. [设置层次结构](#settings-hierarchy)
+2. [核心配置](#core-configuration)
+3. [权限](#permissions)
+4. [钩子](#hooks)
+5. [MCP 服务器](#mcp-servers)
+6. [沙盒](#sandbox)
+7. [插件](#plugins)
+8. [模型配置](#model-configuration)
+9. [显示与用户体验](#display--ux)
+10. [AWS 与云凭证](#aws--cloud-credentials)
+11. [环境变量](#environment-variables-via-env)
+12. [实用命令](#useful-commands)
 
 ---
 
-## Settings Hierarchy
+## 设置层次结构
 
-Settings apply in order of precedence (highest to lowest):
+设置按优先级顺序应用（从高到低）：
 
-| Priority | Location | Scope | Shared? | Purpose |
+| 优先级 | 位置 | 作用域 | 共享？ | 用途 |
 |----------|----------|-------|---------|---------|
-| 1 | Managed settings | Organization | Yes (deployed by IT) | Security policies that cannot be overridden |
-| 2 | Command line arguments | Session | N/A | Temporary single-session overrides |
-| 3 | `.claude/settings.local.json` | Project | No (git-ignored) | Personal project-specific |
-| 4 | `.claude/settings.json` | Project | Yes (committed) | Team-shared settings |
-| 5 | `~/.claude/settings.json` | User | N/A | Global personal defaults |
+| 1 | 托管设置 | 组织 | 是（IT 部署） | 无法覆盖的安全策略 |
+| 2 | 命令行参数 | 会话 | 不适用 | 临时单会话覆盖 |
+| 3 | `.claude/settings.local.json` | 项目 | 否（git 忽略） | 个人项目特定 |
+| 4 | `.claude/settings.json` | 项目 | 是（提交） | 团队共享设置 |
+| 5 | `~/.claude/settings.json` | 用户 | 不适用 | 全局个人默认 |
 
-**Managed settings** are organization-enforced and cannot be overridden by any other level, including command line arguments. Delivery methods:
-- **Server-managed** settings (remote delivery)
-- **MDM profiles** — macOS plist at `com.anthropic.claudecode`
-- **Registry policies** — Windows `HKLM\SOFTWARE\Policies\ClaudeCode` (admin) and `HKCU\SOFTWARE\Policies\ClaudeCode` (user-level, lowest policy priority)
-- **File** — `managed-settings.json` and `managed-mcp.json` (macOS: `/Library/Application Support/ClaudeCode/`, Linux/WSL: `/etc/claude-code/`, Windows: `C:\Program Files\ClaudeCode\`)
-- **Drop-in directory** — `managed-settings.d/` alongside `managed-settings.json` for independent policy fragments (v2.1.83). Following the systemd convention, `managed-settings.json` is merged first as the base, then all `*.json` files in the drop-in directory are sorted alphabetically and merged on top. Later files override earlier ones for scalar values; arrays are concatenated and de-duplicated; objects are deep-merged. Hidden files starting with `.` are ignored. Use numeric prefixes to control merge order (e.g., `10-telemetry.json`, `20-security.json`)
+**托管设置**是组织强制执行的，无法被任何其他级别（包括命令行参数）覆盖。交付方式：
+- **服务器托管**设置（远程交付）
+- **MDM 配置** — macOS plist 在 `com.anthropic.claudecode`
+- **注册表策略** — Windows `HKLM\SOFTWARE\Policies\ClaudeCode`（管理员）和 `HKCU\SOFTWARE\Policies\ClaudeCode`（用户级，最低策略优先级）
+- **文件** — `managed-settings.json` 和 `managed-mcp.json`（macOS: `/Library/Application Support/ClaudeCode/`，Linux/WSL: `/etc/claude-code/`，Windows: `C:\Program Files\ClaudeCode\`）
+- **插入目录** — `managed-settings.d/` 与 `managed-settings.json` 并列，用于独立策略片段（v2.1.83）。 Following the systemd convention, `managed-settings.json` is merged first as the base, then all `*.json` files in the drop-in directory are sorted alphabetically and merged on top. Later files override earlier ones for scalar values; arrays are concatenated and de-duplicated; objects are deep-merged. Hidden files starting with `.` are ignored. Use numeric prefixes to control merge order (e.g., `10-telemetry.json`, `20-security.json`)
 
-Within the managed tier, precedence is: server-managed > MDM/OS-level policies > file-based (`managed-settings.d/*.json` + `managed-settings.json`) > HKCU registry (Windows only). Only one managed source is used; sources do not merge across tiers. Within the file-based tier, drop-in files and the base file are merged together.
+在托管层级中，优先级为：服务器托管 > MDM/OS 级策略 > 基于文件（`managed-settings.d/*.json` + `managed-settings.json`）> HKCU 注册表（仅 Windows）。 Only one managed source is used; sources do not merge across tiers. Within the file-based tier, drop-in files and the base file are merged together.
 
-> **Note:** As of v2.1.75, the deprecated Windows fallback path `C:\ProgramData\ClaudeCode\managed-settings.json` has been removed. Use `C:\Program Files\ClaudeCode\managed-settings.json` instead.
+> **注意：** 从 v2.1.75 起，已弃用的 Windows 回退路径 `C:\ProgramData\ClaudeCode\managed-settings.json` 已移除。请改用 `C:\Program Files\ClaudeCode\managed-settings.json`。
 
-**Important**:
-- `deny` rules have highest safety precedence and cannot be overridden by lower-priority allow/ask rules.
-- Managed settings may lock or override local behavior even if local files specify different values.
-- Array settings (e.g., `permissions.allow`) are **concatenated and deduplicated** across scopes — entries from all levels are combined, not replaced.
+**重要**：
+- `deny` 规则具有最高安全优先级，无法被低优先级的 allow/ask 规则覆盖。
+- 托管设置可能锁定或覆盖本地行为，即使本地文件指定了不同的值。
+- 数组设置（如 `permissions.allow`）在作用域之间**连接和去重** — 来自所有级别的条目被合并，而不是替换。
 
 ---
 
-## Core Configuration
+## 核心配置
 
-### General Settings
+### 常规设置
 
-| Key | Type | Default | Description |
+| 键 | 类型 | 默认值 | 描述 |
 |-----|------|---------|-------------|
-| `$schema` | string | - | JSON Schema URL for IDE validation and autocompletion (e.g., `"https://json.schemastore.org/claude-code-settings.json"`) |
-| `model` | string | `"default"` | Override default model. Accepts aliases (`sonnet`, `opus`, `haiku`) or full model IDs |
-| `agent` | string | - | Set the default agent for the main conversation. Value is the agent name from `.claude/agents/`. Also available via `--agent` CLI flag |
-| `language` | string | `"english"` | Claude's preferred response language |
-| `cleanupPeriodDays` | number | `30` | Sessions inactive longer than this are deleted at startup. Setting to `0` deletes all existing transcripts and disables session persistence entirely (no `.jsonl` files written, `/resume` shows no conversations, hooks receive an empty `transcript_path`) |
-| `autoUpdatesChannel` | string | `"latest"` | Release channel: `"stable"` or `"latest"` |
-| `alwaysThinkingEnabled` | boolean | `false` | Enable extended thinking by default for all sessions |
-| `skipWebFetchPreflight` | boolean | `false` | Skip WebFetch blocklist check before fetching URLs *(in JSON schema, not on official settings page)* |
-| `availableModels` | array | - | Restrict which models users can select via `/model`, `--model`, Config tool, or `ANTHROPIC_MODEL`. Does not affect the Default option. Example: `["sonnet", "haiku"]` |
-| `fastModePerSessionOptIn` | boolean | `false` | Require users to opt in to fast mode each session |
-| `defaultShell` | string | `"bash"` | Default shell for input-box `!` commands. Accepts `"bash"` (default) or `"powershell"`. Setting `"powershell"` routes interactive `!` commands through PowerShell on Windows. Requires `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` (v2.1.84) |
-| `includeGitInstructions` | boolean | `true` | Include git-related instructions in system prompt |
-| `voiceEnabled` | boolean | - | Enable push-to-talk voice dictation. Written automatically when you run `/voice`. Requires a Claude.ai account |
-| `showClearContextOnPlanAccept` | boolean | `false` | Show the "clear context" option on the plan accept screen. Set to `true` to restore the option (hidden by default since v2.1.81) |
+| `$schema` | string | - | 用于 IDE 验证和自动完成的 JSON Schema URL（如 `"https://json.schemastore.org/claude-code-settings.json"`） |
+| `model` | string | `"default"` | 覆盖默认模型。接受别名（`sonnet`、`opus`、`haiku`）或完整模型 ID |
+| `agent` | string | - | 设置主对话的默认代理。值为 `.claude/agents/` 中的代理名称。也可通过 `--agent` CLI 标志使用 |
+| `language` | string | `"english"` | Claude 首选的响应语言 |
+| `cleanupPeriodDays` | number | `30` | 超过此时间的不活动会话在启动时删除. Setting to `0` deletes all existing transcripts and disables session persistence entirely (no `.jsonl` files written, `/resume` shows no conversations, hooks receive an empty `transcript_path`) |
+| `autoUpdatesChannel` | string | `"latest"` | 发布渠道：`"stable"` 或 `"latest"` |
+| `alwaysThinkingEnabled` | boolean | `false` | 默认情况下为所有会话启用扩展思考 |
+| `skipWebFetchPreflight` | boolean | `false` | 在获取 URL 之前跳过 WebFetch 黑名单检查 *(in JSON schema, not on official settings page)* |
+| `availableModels` | array | - | 限制用户可选择的模型 via `/model`, `--model`, Config tool, or `ANTHROPIC_MODEL`. Does not affect the Default option. Example: `["sonnet", "haiku"]` |
+| `fastModePerSessionOptIn` | boolean | `false` | 要求用户每个会话选择加入快速模式 |
+| `defaultShell` | string | `"bash"` | 输入框 `!` 命令的默认 shell. Accepts `"bash"` (default) or `"powershell"`. Setting `"powershell"` routes interactive `!` commands through PowerShell on Windows. Requires `CLAUDE_CODE_USE_POWERSHELL_TOOL=1` (v2.1.84) |
+| `includeGitInstructions` | boolean | `true` | 在系统提示中包含 git 相关指令 |
+| `voiceEnabled` | boolean | - | 启用按键说话语音输入. Written automatically when you run `/voice`. Requires a Claude.ai account |
+| `showClearContextOnPlanAccept` | boolean | `false` | 在计划接受屏幕上显示"清除上下文"选项. Set to `true` to restore the option (hidden by default since v2.1.81) |
 | `disableDeepLinkRegistration` | string | - | Set to `"disable"` to prevent Claude Code from registering the `claude-cli://` protocol handler with the operating system on startup. Deep links let external tools open a Claude Code session with a pre-filled prompt via `claude-cli://open?q=...`. Useful in environments where protocol handler registration is restricted or managed separately |
 | `feedbackSurveyRate` | number | - | Probability (0–1) that the session quality survey appears when eligible. Enterprise admins can control how often the survey is shown. Example: `0.05` = 5% of eligible sessions |
 
-**Example:**
+**示例：**
 ```json
 {
   "model": "opus",
@@ -93,16 +93,16 @@ Within the managed tier, precedence is: server-managed > MDM/OS-level policies >
 }
 ```
 
-### Plans & Memory Directories
+### 计划和记忆目录
 
-Store plan and auto-memory files in custom locations.
+在自定义位置存储计划和自动记忆文件。
 
-| Key | Type | Default | Description |
+| 键 | 类型 | 默认值 | 描述 |
 |-----|------|---------|-------------|
-| `plansDirectory` | string | `~/.claude/plans` | Directory where `/plan` outputs are stored |
-| `autoMemoryDirectory` | string | - | Custom directory for auto-memory storage. Accepts `~/`-expanded paths. Not accepted in project settings (`.claude/settings.json`) to prevent redirecting memory writes to sensitive locations; accepted from policy, local, and user settings |
+| `plansDirectory` | string | `~/.claude/plans` | `/plan` 输出存储的目录 |
+| `autoMemoryDirectory` | string | - | 自动记忆存储的自定义目录. Accepts `~/`-expanded paths. Not accepted in project settings (`.claude/settings.json`) to prevent redirecting memory writes to sensitive locations; accepted from policy, local, and user settings |
 
-**Example:**
+**示例：**
 ```json
 {
   "plansDirectory": "./my-plans"
@@ -115,12 +115,12 @@ Store plan and auto-memory files in custom locations.
 
 Configure how `--worktree` creates and manages git worktrees. Useful for reducing disk usage and startup time in large monorepos.
 
-| Key | Type | Default | Description |
+| 键 | 类型 | 默认值 | 描述 |
 |-----|------|---------|-------------|
 | `worktree.symlinkDirectories` | array | `[]` | Directories to symlink from the main repository into each worktree to avoid duplicating large directories on disk |
 | `worktree.sparsePaths` | array | `[]` | Directories to check out in each worktree via git sparse-checkout (cone mode). Only the listed paths are written to disk |
 
-**Example:**
+**示例：**
 ```json
 {
   "worktree": {
@@ -134,13 +134,13 @@ Configure how `--worktree` creates and manages git worktrees. Useful for reducin
 
 Customize attribution messages for git commits and pull requests.
 
-| Key | Type | Default | Description |
+| 键 | 类型 | 默认值 | 描述 |
 |-----|------|---------|-------------|
 | `attribution.commit` | string | Co-authored-by | Git commit attribution (supports trailers) |
 | `attribution.pr` | string | Generated message | Pull request description attribution |
 | `includeCoAuthoredBy` | boolean | `true` | **DEPRECATED** - Use `attribution` instead |
 
-**Example:**
+**示例：**
 ```json
 {
   "attribution": {
@@ -162,7 +162,7 @@ Scripts for dynamic authentication token generation.
 | `forceLoginMethod` | string | Restrict login to `"claudeai"` or `"console"` accounts |
 | `forceLoginOrgUUID` | string | UUID to automatically select organization during login |
 
-**Example:**
+**示例：**
 ```json
 {
   "apiKeyHelper": "/bin/generate_temp_api_key.sh",
@@ -179,7 +179,7 @@ Display custom announcements to users at startup (cycled randomly).
 |-----|------|-------------|
 | `companyAnnouncements` | array | Array of strings displayed at startup |
 
-**Example:**
+**示例：**
 ```json
 {
   "companyAnnouncements": [
@@ -192,11 +192,11 @@ Display custom announcements to users at startup (cycled randomly).
 
 ---
 
-## Permissions
+## 权限
 
-Control what tools and operations Claude can perform.
+控制 Claude 可以执行哪些工具和操作。
 
-### Permission Structure
+### 权限结构
 
 ```json
 {
@@ -211,38 +211,38 @@ Control what tools and operations Claude can perform.
 }
 ```
 
-### Permission Keys
+### 权限键
 
 | Key | Type | Description |
 |-----|------|-------------|
-| `permissions.allow` | array | Rules allowing tool use without prompting |
-| `permissions.ask` | array | Rules requiring user confirmation |
-| `permissions.deny` | array | Rules blocking tool use (highest precedence) |
-| `permissions.additionalDirectories` | array | Extra directories Claude can access |
-| `permissions.defaultMode` | string | Default permission mode. In Remote environments, only `acceptEdits` and `plan` are honored (v2.1.70+) |
-| `permissions.disableBypassPermissionsMode` | string | Prevent bypass mode activation |
+| `permissions.allow` | array | 允许工具使用而不提示的规则 |
+| `permissions.ask` | array | 需要用户确认的规则 |
+| `permissions.deny` | array | 阻止工具使用的规则（最高优先级） |
+| `permissions.additionalDirectories` | array | Claude 可访问的额外目录 |
+| `permissions.defaultMode` | string | 默认权限模式. In Remote environments, only `acceptEdits` and `plan` are honored (v2.1.70+) |
+| `permissions.disableBypassPermissionsMode` | string | 防止绕过模式激活 |
 | `allowManagedPermissionRulesOnly` | boolean | **(Managed only)** Only managed permission rules apply; user/project `allow`, `ask`, `deny` rules are ignored |
 | `allow_remote_sessions` | boolean | **(Managed only)** Allow users to start Remote Control and web sessions. Defaults to `true`. Set to `false` to prevent remote session access *(not in official docs — official permissions page states "Access to Remote Control and web sessions is not controlled by a managed settings key." On Team and Enterprise plans, admins enable/disable via [Claude Code admin settings](https://claude.ai/admin-settings/claude-code))* |
 | `autoMode` | object | Customize what the [auto mode](/en/permission-modes#eliminate-prompts-with-auto-mode) classifier blocks and allows. Contains `environment` (trusted infrastructure descriptions), `allow` (exceptions to block rules), and `soft_deny` (block rules) — all arrays of prose strings. **Not read from shared project settings** (`.claude/settings.json`) to prevent repo injection. Available in user, local, and managed settings. Setting `allow` or `soft_deny` **replaces** the entire default list for that section. Run `claude auto-mode defaults` to see built-in rules before customizing |
 | `disableAutoMode` | string | Set to `"disable"` to prevent [auto mode](/en/permission-modes#eliminate-prompts-with-auto-mode) from being activated. Removes `auto` from the `Shift+Tab` cycle and rejects `--permission-mode auto` at startup. Can be set at any settings level; most useful in managed settings where users cannot override it |
 | `useAutoModeDuringPlan` | boolean | Whether plan mode uses auto mode semantics when auto mode is available. Default: `true`. Not read from shared project settings (`.claude/settings.json`). Appears in `/config` as "Use auto mode during plan" |
 
-### Permission Modes
+### 权限模式
 
-| Mode | Behavior |
+| 模式 | 行为 |
 |------|----------|
-| `"default"` | Standard permission checking with prompts |
-| `"acceptEdits"` | Auto-accept file edits without asking |
+| `"default"` | 带提示的标准权限检查 |
+| `"acceptEdits"` | 自动接受文件编辑而不询问 |
 | `"askEdits"` | Ask before every operation *(not in official docs — unverified)* |
-| `"dontAsk"` | Auto-denies tools unless pre-approved via `/permissions` or `permissions.allow` rules |
+| `"dontAsk"` | 自动拒绝工具，除非预先批准 via `/permissions` or `permissions.allow` rules |
 | `"viewOnly"` | Read-only mode, no modifications *(not in official docs — unverified)* |
-| `"bypassPermissions"` | Skip all permission checks (dangerous) |
-| `"auto"` | Background classifier replaces manual prompts. Research preview — requires Team plan + Sonnet/Opus 4.6. Classifier auto-approves read-only and file edits; sends everything else through a safety check. Falls back to prompting after 3 consecutive or 20 total blocks. Configure with `autoMode` setting |
-| `"plan"` | Read-only exploration mode |
+| `"bypassPermissions"` | 跳过所有权限检查（危险） |
+| `"auto"` | 后台分类器取代手动提示. Research preview — requires Team plan + Sonnet/Opus 4.6. Classifier auto-approves read-only and file edits; sends everything else through a safety check. Falls back to prompting after 3 consecutive or 20 total blocks. Configure with `autoMode` setting |
+| `"plan"` | 只读探索模式 |
 
-### Tool Permission Syntax
+### 工具权限语法
 
-| Tool | Syntax | Examples |
+| 工具 | 语法 | 示例 |
 |------|--------|----------|
 | `Bash` | `Bash(command pattern)` | `Bash(npm run *)`, `Bash(* install)`, `Bash(git * main)` |
 | `Read` | `Read(path pattern)` | `Read(.env)`, `Read(./secrets/**)` |
@@ -274,7 +274,7 @@ Control what tools and operations Claude can perform.
 - Permission rules support output redirections: `Bash(python:*)` matches `python script.py > output.txt`
 - The legacy `:*` suffix syntax (e.g., `Bash(npm:*)`) is equivalent to ` *` but is deprecated
 
-**Example:**
+**示例：**
 ```json
 {
   "permissions": {
@@ -302,29 +302,29 @@ Control what tools and operations Claude can perform.
 
 ---
 
-## Hooks
+## 钩子
 
-Hook configuration (events, properties, matchers, exit codes, environment variables, and HTTP hooks) is maintained in a dedicated repository:
+钩子配置 (events, properties, matchers, exit codes, environment variables, and HTTP hooks) is maintained in a dedicated repository:
 
 > **[claude-code-hooks](https://github.com/shanraisshan/claude-code-hooks)** — Complete hook reference with sound notification system, all 19 hook events, HTTP hooks, matcher patterns, exit codes, and environment variables.
 
-Hook-related settings keys (`hooks`, `disableAllHooks`, `allowManagedHooksOnly`, `allowedHttpHookUrls`, `httpHookAllowedEnvVars`) are documented there.
+钩子相关设置键 (`hooks`, `disableAllHooks`, `allowManagedHooksOnly`, `allowedHttpHookUrls`, `httpHookAllowedEnvVars`) are documented there.
 
 For the official hooks reference, see the [Claude Code Hooks Documentation](https://code.claude.com/docs/en/hooks).
 
 ---
 
-## MCP Servers
+## MCP 服务器
 
-Configure Model Context Protocol servers for extended capabilities.
+配置模型上下文协议服务器以扩展功能。
 
-### MCP Settings
+### MCP 设置
 
 | Key | Type | Scope | Description |
 |-----|------|-------|-------------|
-| `enableAllProjectMcpServers` | boolean | Any | Auto-approve all `.mcp.json` servers |
-| `enabledMcpjsonServers` | array | Any | Allowlist specific server names |
-| `disabledMcpjsonServers` | array | Any | Blocklist specific server names |
+| `enableAllProjectMcpServers` | boolean | Any | 自动批准所有 `.mcp.json` 服务器 |
+| `enabledMcpjsonServers` | array | Any | 白名单特定服务器名称 |
+| `disabledMcpjsonServers` | array | Any | 黑名单特定服务器名称 |
 | `allowedMcpServers` | array | Managed only | Allowlist with name/command/URL matching |
 | `deniedMcpServers` | array | Managed only | Blocklist with matching |
 | `allowManagedMcpServersOnly` | boolean | Managed only | Only allow MCP servers explicitly listed in managed allowlist |
@@ -346,7 +346,7 @@ Configure Model Context Protocol servers for extended capabilities.
 }
 ```
 
-**Example:**
+**示例：**
 ```json
 {
   "enableAllProjectMcpServers": true,
@@ -357,13 +357,13 @@ Configure Model Context Protocol servers for extended capabilities.
 
 ---
 
-## Sandbox
+## 沙盒
 
 Configure bash command sandboxing for security.
 
-### Sandbox Settings
+### 沙盒 Settings
 
-| Key | Type | Default | Description |
+| 键 | 类型 | 默认值 | 描述 |
 |-----|------|---------|-------------|
 | `sandbox.enabled` | boolean | `false` | Enable bash sandboxing |
 | `sandbox.failIfUnavailable` | boolean | `false` | Exit with error when sandbox is enabled but cannot start, instead of running unsandboxed. Useful for enterprise policies that require strict sandboxing (v2.1.83) |
@@ -387,7 +387,7 @@ Configure bash command sandboxing for security.
 | `sandbox.filesystem.allowManagedReadPathsOnly` | boolean | `false` | **(Managed only)** Only `allowRead` paths from managed settings are respected. `allowRead` entries from user, project, and local settings are ignored |
 | `sandbox.enableWeakerNetworkIsolation` | boolean | `false` | (macOS only) Allow access to system TLS trust (`com.apple.trustd.agent`); reduces security |
 
-**Example:**
+**示例：**
 ```json
 {
   "sandbox": {
@@ -405,7 +405,7 @@ Configure bash command sandboxing for security.
 
 ---
 
-## Plugins
+## 插件
 
 Configure Claude Code plugins and marketplaces.
 
@@ -424,7 +424,7 @@ Configure Claude Code plugins and marketplaces.
 
 **Marketplace source types:** `github`, `git`, `directory`, `hostPattern`, `settings`, `url` *(not in official docs — unverified)*, `npm` *(not in official docs — unverified)*, `file` *(not in official docs — unverified)*. Use `source: 'settings'` to declare a small set of plugins inline without setting up a hosted marketplace repository.
 
-**Example:**
+**示例：**
 ```json
 {
   "enabledPlugins": {
@@ -457,7 +457,7 @@ Configure Claude Code plugins and marketplaces.
 
 ---
 
-## Model Configuration
+## 模型配置
 
 ### Model Aliases
 
@@ -471,7 +471,7 @@ Configure Claude Code plugins and marketplaces.
 | `"opus[1m]"` | Opus with 1M token context (default on Max, Team, and Enterprise since v2.1.75) |
 | `"opusplan"` | Opus for planning, Sonnet for execution |
 
-**Example:**
+**示例：**
 ```json
 {
   "model": "opus"
@@ -482,12 +482,12 @@ Configure Claude Code plugins and marketplaces.
 
 Map Anthropic model IDs to provider-specific model IDs for Bedrock, Vertex, or Foundry deployments.
 
-| Key | Type | Default | Description |
+| 键 | 类型 | 默认值 | 描述 |
 |-----|------|---------|-------------|
 | `effortLevel` | string | - | Persist the effort level across sessions. Accepts `"low"`, `"medium"`, or `"high"`. Written automatically when you run `/effort low`, `/effort medium`, or `/effort high`. Supported on Opus 4.6 and Sonnet 4.6 |
 | `modelOverrides` | object | - | Map model picker entries to provider-specific IDs (e.g., Bedrock inference profile ARNs). Each key is a model picker entry name, each value is the provider model ID |
 
-**Example:**
+**示例：**
 ```json
 {
   "modelOverrides": {
@@ -533,11 +533,11 @@ Configure via `env` key:
 
 ---
 
-## Display & UX
+## 显示与用户体验
 
 ### Display Settings
 
-| Key | Type | Default | Description |
+| 键 | 类型 | 默认值 | 描述 |
 |-----|------|---------|-------------|
 | `statusLine` | object | - | Custom status line configuration |
 | `outputStyle` | string | `"default"` | Output style (e.g., `"Explanatory"`) |
@@ -552,7 +552,7 @@ Configure via `env` key:
 
 These display preferences are stored in `~/.claude.json`, **not** `settings.json`. Adding them to `settings.json` will trigger a schema validation error.
 
-| Key | Type | Default | Description |
+| 键 | 类型 | 默认值 | 描述 |
 |-----|------|---------|-------------|
 | `autoConnectIde` | boolean | `false` | Automatically connect to a running IDE when Claude Code starts from an external terminal. Appears in `/config` as **Auto-connect to IDE (external terminal)** when running outside a VS Code or JetBrains terminal |
 | `autoInstallIdeExtension` | boolean | `true` | Automatically install the Claude Code IDE extension when running from a VS Code terminal. Appears in `/config` as **Auto-install IDE extension**. Can also be disabled via `CLAUDE_CODE_IDE_SKIP_AUTO_INSTALL` env var |
@@ -603,7 +603,7 @@ The file suggestion script receives a JSON object on stdin (e.g., `{"query": "sr
 }
 ```
 
-**Example:**
+**示例：**
 ```json
 {
   "statusLine": {
@@ -624,7 +624,7 @@ The file suggestion script receives a JSON object on stdin (e.g., `{"query": "sr
 
 ---
 
-## AWS & Cloud Credentials
+## AWS 与云凭证
 
 ### AWS Settings
 
@@ -633,7 +633,7 @@ The file suggestion script receives a JSON object on stdin (e.g., `{"query": "sr
 | `awsAuthRefresh` | string | Script to refresh AWS auth (modifies `.aws` dir) |
 | `awsCredentialExport` | string | Script outputting JSON with AWS credentials |
 
-**Example:**
+**示例：**
 ```json
 {
   "awsAuthRefresh": "aws sso login --profile myprofile",
@@ -647,7 +647,7 @@ The file suggestion script receives a JSON object on stdin (e.g., `{"query": "sr
 |-----|------|-------------|
 | `otelHeadersHelper` | string | Script to generate dynamic OpenTelemetry headers |
 
-**Example:**
+**示例：**
 ```json
 {
   "otelHeadersHelper": "/bin/generate_otel_headers.sh"
@@ -656,7 +656,7 @@ The file suggestion script receives a JSON object on stdin (e.g., `{"query": "sr
 
 ---
 
-## Environment Variables (via `env`)
+## 环境变量 (via `env`)
 
 Set environment variables for all Claude Code sessions.
 
@@ -802,7 +802,7 @@ Set environment variables for all Claude Code sessions.
 
 ---
 
-## Useful Commands
+## 实用命令
 
 | Command | Description |
 |---------|-------------|
