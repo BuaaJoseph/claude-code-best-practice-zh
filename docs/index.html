@@ -8,40 +8,47 @@
   <style>
     :root {
       --theme-color: #667eea;
+      --sidebar-nav-link-color: #333;
     }
     .sidebar-nav > a:hover, .sidebar-nav > a.active {
-      color: var(--theme-color);
+      color: var(--theme-color) !important;
     }
     .markdown-section h1 {
       color: var(--theme-color);
       border-bottom: 2px solid var(--theme-color);
       padding-bottom: 10px;
     }
+    .app-name-link {
+      font-size: 1.5rem !important;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <div id="app">加载中...</div>
+  <div id="app">正在加载文档...</div>
   <script>
     window.$docsify = {
       name: 'Claude Code 最佳实践',
       repo: 'https://github.com/BuaaJoseph/claude-code-best-practice-zh',
-      loadSidebar: true,
-      subMaxLevel: 3,
+      loadSidebar: '_sidebar.md',
+      subMaxLevel: 2,
       auto2top: true,
+      maxLevel: 3,
+      formatUpdated: '{YYYY}/{MM}/{DD}',
       search: {
         maxAge: 86400000,
         paths: 'auto',
-        placeholder: '搜索'
+        placeholder: '🔍 搜索文档'
       },
       pagination: {
-        previousText: '上一页',
-        nextText: '下一页',
+        previousText: '← 上一页',
+        nextText: '下一页 →',
         crossChapter: true
       },
       copyCode: {
-        buttonText: '复制',
+        buttonText: '📋 复制',
         errorText: '复制失败',
-        successText: '已复制'
+        successText: '已复制!'
       }
     }
   </script>
