@@ -8,15 +8,18 @@
   <style>
     :root { --theme-color: #667eea; }
     .markdown-section h1 { color: var(--theme-color); border-bottom: 2px solid var(--theme-color); padding-bottom: 10px; }
+    .sidebar-nav > a { color: #333 !important; text-decoration: none; }
+    .sidebar-nav > a:hover { color: var(--theme-color) !important; }
   </style>
 </head>
 <body>
-  <div id="app">正在加载文档...</div>
+  <div id="app">正在加载...</div>
   <script>
     window.$docsify = {
       name: 'Claude Code 最佳实践',
       repo: 'https://github.com/BuaaJoseph/claude-code-best-practice-zh',
       loadSidebar: '_sidebar.md',
+      homepage: 'README.md',
       subMaxLevel: 2,
       auto2top: true,
       search: { maxAge: 86400000, paths: 'auto', placeholder: '🔍 搜索' }
