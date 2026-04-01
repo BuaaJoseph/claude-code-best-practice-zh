@@ -1,17 +1,17 @@
-# Windows Setup
+# Windows 配置
 
-[Back to Day 0](README.md)
+[返回第 0 天](README.md)
 
 ---
 
 **Node.js**
-- Go to [nodejs.org](https://nodejs.org)
-- Click the **"Download Node.js (LTS)"** button — this downloads the `.msi` installer
-- Run the `.msi` file and click **Next** through the wizard
-- Accept the defaults, click **Install**, wait for it to finish
+- 访问 [nodejs.org](https://nodejs.org)
+- 点击 **"Download Node.js (LTS)"** 按钮 — 这会下载 `.msi` 安装程序
+- 运行 `.msi` 文件，点击 **Next** 进入安装向导
+- 接受默认选项，点击 **Install**，等待安装完成
 
-**Verify Node.js**
-- Open a **new** terminal (PowerShell or Windows Terminal) and run:
+**验证 Node.js**
+- 打开**新的**终端（PowerShell 或 Windows Terminal）并运行：
   ```powershell
   node --version
   npm --version
@@ -21,13 +21,13 @@
 - ```powershell
   npm install -g @anthropic-ai/claude-code
   ```
-- If you get a permission error, run your terminal as **Administrator** (right-click > Run as administrator)
+- 如果遇到权限错误，请以**管理员身份**运行终端（右键 > 以管理员身份运行）
 
-**Verify**
+**验证**
 - ```powershell
   claude --version
   ```
 
 ---
 
-Now head back to [README.md](README.md) for authentication setup.
+现在返回 [README.md](README.md) 进行身份验证配置。

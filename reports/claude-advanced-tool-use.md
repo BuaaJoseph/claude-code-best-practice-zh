@@ -1,72 +1,72 @@
-# Claude Advanced Tool Use Patterns
+# Claude 高级工具使用模式
 
-API-level features (now GA) that reduce token consumption, latency, and improve tool accuracy. Released with Opus/Sonnet 4.6.
+API 级功能（现已 GA）减少 token 消耗、延迟并提高工具准确性随 Opus/Sonnet 4.6 发布。
 
 <table width="100%">
 <tr>
-<td><a href="../">← Back to Claude Code Best Practice</a></td>
+<td><a href="../">← 返回 Claude Code 最佳实践</a></td>
 <td align="right"><img src="../!/claude-jumping.svg" alt="Claude" width="60" /></td>
 </tr>
 </table>
 
-## Table of Contents
+## 目录
 
-1. [Overview](#overview)
-2. [Programmatic Tool Calling (PTC)](#programmatic-tool-calling-ptc)
-3. [Dynamic Filtering for Web Search/Fetch](#dynamic-filtering-for-web-searchfetch)
-4. [Tool Search Tool](#tool-search-tool)
-5. [Tool Use Examples](#tool-use-examples)
-6. [Claude Code Relevance](#claude-code-relevance)
+1. [概述](#概述)
+2. [编程式工具调用（PTC）](#编程式工具调用-ptc)
+3. [Web 搜索/获取的动态过滤](#web-搜索获取的动态过滤)
+4. [工具搜索工具](#工具搜索工具)
+5. [工具使用示例](#工具使用示例)
+6. [Claude Code 相关性](#claude-code-相关性)
 
 ---
 
-## Overview
+## 概述
 
-| Feature | Problem Solved | Token Savings | Availability |
+| 功能 | 解决的问题 | Token 节省 | 可用性 |
 |---------|---------------|---------------|--------------|
-| Programmatic Tool Calling | Multi-step agent loops burn tokens on round trips | ~37% reduction | API, Foundry (GA) |
-| Dynamic Filtering | Web search/fetch results bloat context with irrelevant content | ~24% fewer input tokens | API, Foundry (GA) |
-| Tool Search Tool | Too many tool definitions bloat context | ~85% reduction | API, Foundry (GA) |
-| Tool Use Examples | Schema alone can't express usage patterns | 72% → 90% accuracy | API, Foundry (GA) |
+| 编程式工具调用 | 多步骤代理循环在往返中燃烧 token | 约 37% 减少 | API、Foundry（GA） |
+| 动态过滤 | Web 搜索/获取结果使上下文膨胀无关内容 | 约 24% 更少输入 token | API、Foundry（GA） |
+| 工具搜索工具 | 太多工具定义使上下文膨胀 | 约 85% 减少 | API、Foundry（GA） |
+| 工具使用示例 | 模式alone 无法表达使用模式 | 72% → 90% 准确率 | API、Foundry（GA） |
 
-All features are **generally available** as of February 18, 2026.
+所有功能于 **2026 年 2 月 18 日全面可用**。
 
-**Strategic layering** — start with your biggest bottleneck:
-- Context bloat from tool definitions → Tool Search Tool
-- Large intermediate results → Programmatic Tool Calling
-- Web search noise → Dynamic Filtering
-- Parameter errors → Tool Use Examples
+**战略分层** — 从你最大的瓶颈开始：
+- 工具定义导致的上下文膨胀 → 工具搜索工具
+- 大型中间结果 → 编程式工具调用
+- Web 搜索噪音 → 动态过滤
+- 参数错误 → 工具使用示例
 
 ---
 
-## Programmatic Tool Calling (PTC)
+## 编程式工具调用（PTC）
 
-<img src="assets/programmatic-tool-calling-diagram.svg" alt="PTC Diagram — Traditional vs Programmatic Tool Calling" width="100%" />
+<img src="assets/programmatic-tool-calling-diagram.svg" alt="PTC 图 — 传统 vs 编程式工具调用" width="100%" />
 
-### The Paradigm Shift
+### 范式转变
 
-**Before (Traditional Tool Calling):**
+**之前（传统工具调用）：**
 ```
-User prompt → Claude → Tool call 1 → Response 1 → Claude → Tool call 2 → Response 2 → Claude → Tool call 3 → Response 3 → Claude → Final answer
+用户提示 → Claude → 工具调用 1 → 响应 1 → Claude → 工具调用 2 → 响应 2 → Claude → 工具调用 3 → 响应 3 → Claude → 最终答案
 ```
-Each tool call requires a full model round trip. 3 tools = 3 inference passes.
+每个工具调用需要完整的模型往返。3 个工具 = 3 次推理。
 
-**After (Programmatic Tool Calling):**
+**之后（编程式工具调用）：**
 ```
-User prompt → Claude → writes Python script → Script calls Tool 1, Tool 2, Tool 3 internally → stdout → Claude → Final answer
+用户提示 → Claude → 编写 Python 脚本 → 脚本内部调用工具 1、工具 2、工具 3 → stdout → Claude → 最终答案
 ```
-Claude writes code that orchestrates all tools. Only the final `stdout` enters the context window. 3 tools = 1 inference pass.
+Claude 编写编排所有工具的代码。只有最终的 `stdout` 进入上下文窗口。3 个工具 = 1 次推理。
 
-### How It Works
+### 工作原理
 
-1. You define tools with `allowed_callers: ["code_execution_20250825"]`
-2. Claude writes Python that calls those tools as async functions inside a sandbox
-3. When a tool function is called, the sandbox pauses and the API returns a `tool_use` block
-4. You provide the tool result — it goes to the **running code**, not Claude's context
-5. Code resumes, processes results, calls more tools if needed
-6. Only `stdout` from the final execution reaches Claude
+1. 你使用 `allowed_callers: ["code_execution_20250825"]` 定义工具
+2. Claude 编写在沙箱中异步调用这些工具的 Python
+3. 当工具函数被调用时，沙箱暂停，API 返回一个 `tool_use` 块
+4. 你提供工具结果 — 它送到**运行中的代码**，而非 Claude 的上下文
+5. 代码恢复，处理结果，如需要则调用更多工具
+6. 只有最终执行的 `stdout` 到达 Claude
 
-### Key Configuration
+### Key 配置
 
 ```json
 {
@@ -77,11 +77,11 @@ Claude writes code that orchestrates all tools. Only the final `stdout` enters t
     },
     {
       "name": "query_database",
-      "description": "Execute a SQL query. Returns rows as JSON objects with fields: id (str), name (str), revenue (float).",
+      "description": "执行 SQL 查询。以带有字段的 JSON 对象返回行：id（str）、name（str）、revenue（float）。",
       "input_schema": {
         "type": "object",
         "properties": {
-          "sql": { "type": "string", "description": "SQL query to execute" }
+          "sql": { "type": "string", "description": "要执行的 SQL 查询" }
         },
         "required": ["sql"]
       },
@@ -91,31 +91,31 @@ Claude writes code that orchestrates all tools. Only the final `stdout` enters t
 }
 ```
 
-### The `allowed_callers` Field
+### `allowed_callers` 字段
 
-| Value | Behavior |
+| 值 | 行为 |
 |-------|----------|
-| `["direct"]` | Traditional tool calling only (default if omitted) |
-| `["code_execution_20250825"]` | Only callable from Python sandbox |
-| `["direct", "code_execution_20250825"]` | Both modes available |
+| `["direct"]` | 仅传统工具调用（如果省略，则为默认值） |
+| `["code_execution_20250825"]` | 只能从 Python 沙箱调用 |
+| `["direct", "code_execution_20250825"]` | 两种模式都可用 |
 
-**Recommendation:** Choose one mode per tool, not both. This gives Claude clearer guidance.
+**建议：** 每个工具选择一个模式，而非两者。这为 Claude 提供更清晰指导。
 
-### The `caller` Field in Responses
+### 响应中的 `caller` 字段
 
-Every tool use block includes a `caller` field so you know how it was invoked:
+每个工具使用块都包含一个 `caller` 字段，以便你知道它如何被调用：
 
 ```json
-// Direct (traditional)
+// 直接（传统）
 { "caller": { "type": "direct" } }
 
-// Programmatic (from code execution)
+// 编程式（来自代码执行）
 { "caller": { "type": "code_execution_20250825", "tool_id": "srvtoolu_abc123" } }
 ```
 
-### Advanced Patterns
+### 高级模式
 
-**Batch processing** — process N items in 1 inference pass:
+**批处理** — 在 1 次推理中处理 N 个项目：
 ```python
 regions = ["West", "East", "Central", "North", "South"]
 results = {}
@@ -127,17 +127,17 @@ top = max(results.items(), key=lambda x: x[1])
 print(f"Top region: {top[0]} with ${top[1]:,}")
 ```
 
-**Early termination** — stop as soon as success criteria are met:
+**提前终止** — 达到成功标准后立即停止：
 ```python
 endpoints = ["us-east", "eu-west", "apac"]
 for endpoint in endpoints:
     status = await check_health(endpoint)
     if status == "healthy":
-        print(f"Found healthy endpoint: {endpoint}")
+        print(f"找到健康端点：{endpoint}")
         break
 ```
 
-**Conditional tool selection:**
+**条件工具选择：**
 ```python
 file_info = await get_file_info(path)
 if file_info["size"] < 10000:
@@ -147,80 +147,80 @@ else:
 print(content)
 ```
 
-**Data filtering** — reduce what Claude sees:
+**数据过滤** — 减少 Claude 看到的内容：
 ```python
 logs = await fetch_logs(server_id)
 errors = [log for log in logs if "ERROR" in log]
-print(f"Found {len(errors)} errors")
+print(f"发现 {len(errors)} 个错误")
 for error in errors[-10:]:
     print(error)
 ```
 
-### Model Compatibility
+### 模型兼容性
 
-| Model | Supported |
+| 模型 | 支持 |
 |-------|-----------|
-| Claude Opus 4.6 | Yes |
-| Claude Sonnet 4.6 | Yes |
-| Claude Sonnet 4.5 | Yes |
-| Claude Opus 4.5 | Yes |
+| Claude Opus 4.6 | 是 |
+| Claude Sonnet 4.6 | 是 |
+| Claude Sonnet 4.5 | 是 |
+| Claude Opus 4.5 | 是 |
 
-### Constraints
+### 限制
 
-| Constraint | Detail |
-|-----------|--------|
-| **Not on Bedrock/Vertex** | API and Foundry only |
-| **No MCP tools** | MCP connector tools cannot be called programmatically |
-| **No web search/fetch** | Web tools not supported in PTC |
-| **No structured outputs** | `strict: true` tools incompatible |
-| **No forced tool choice** | `tool_choice` cannot force PTC |
-| **Container lifetime** | ~4.5 minutes before expiry |
-| **ZDR** | Not covered by Zero Data Retention |
-| **Tool results as strings** | Validate external results for code injection risks |
+| 限制 | 详情 |
+|-----------|-----------|
+| **不在 Bedrock/Vertex** | 仅 API 和 Foundry |
+| **无 MCP 工具** | MCP 连接器工具不能被编程式调用 |
+| **无 web 搜索/获取** | Web 工具在 PTC 中不支持 |
+| **无结构化输出** | `strict: true` 工具不兼容 |
+| **无强制工具选择** | `tool_choice` 不能强制 PTC |
+| **容器生命周期** | 约 4.5 分钟到期 |
+| **ZDR** | 不在零数据保留范围内 |
+| **工具结果为字符串** | 验证外部结果以防止代码注入风险 |
 
-### When to Use PTC
+### 何时使用 PTC
 
-| Good Use Cases | Less Ideal |
+| 好的用例 | 不太理想 |
 |----------------|------------|
-| Processing large datasets needing aggregates | Single tool calls with simple responses |
-| 3+ dependent tool calls in sequence | Tools needing immediate user feedback |
-| Filtering/transforming results before Claude sees them | Very fast operations (overhead > benefit) |
-| Parallel operations across many items | |
-| Conditional logic based on intermediate results | |
+| 处理需要聚合的大型数据集 | 简单响应的单一工具调用 |
+| 序列中有 3+ 个依赖工具调用 | 需要立即用户反馈的工具 |
+| 在 Claude 看到之前过滤/转换结果 | 非常快的操作（开销 > 收益）|
+| 跨许多项目的并行操作 | |
+| 基于中间结果的条件逻辑 | |
 
-### Token Efficiency
+### Token 效率
 
-- Tool results from programmatic calls are **not added to Claude's context** — only final `stdout`
-- Intermediate processing happens in code, not model tokens
-- 10 tools programmatically ≈ 1/10th the tokens of 10 direct calls
+- 编程式调用的工具结果**不添加到 Claude 的上下文** — 仅最终 `stdout`
+- 中间处理发生在代码中，而非模型 token
+- 10 个工具编程式 ≈ 1/10 token 对比 10 个直接调用
 
 ---
 
-## Dynamic Filtering for Web Search/Fetch
+## Web 搜索/获取的动态过滤
 
-### The Problem
+### 问题
 
-Web search and fetch tools dump full HTML pages into Claude's context window. Most of that content is irrelevant — navigation, ads, boilerplate. Claude then reasons over all of it, wasting tokens and reducing accuracy.
+Web 搜索和获取工具将完整的 HTML 页面倒入 Claude 的上下文窗口。大部分内容无关 — 导航、广告、模板。然后 Claude 在所有内容上推理，浪费 token 并降低准确性。
 
-### The Solution
+### 解决方案
 
-Claude now **writes and executes Python code to filter web results** before they enter the context window. Instead of reasoning over raw HTML, Claude filters, parses, and extracts only relevant content in a sandbox.
+Claude 现在**编写并执行 Python 代码来过滤 Web 结果**然后它们才进入上下文窗口。Claude 不在原始 HTML 上推理，而是在沙箱中过滤、解析并仅提取相关内容。
 
-### How It Works
+### 工作原理
 
-**Before:**
+**之前：**
 ```
-Query → Search results → Fetch full HTML × N pages → All content enters context → Claude reasons over everything
-```
-
-**After:**
-```
-Query → Search results → Claude writes filtering code → Code extracts relevant content only → Filtered results enter context
+查询 → 搜索结果 → 获取完整 HTML × N 页 → 所有内容进入上下文 → Claude 在所有内容上推理
 ```
 
-### API Configuration
+**之后：**
+```
+查询 → 搜索结��� → Claude 编写过滤代码 → 代码仅提取相关内容 → 过滤结果进入上下文
+```
 
-Uses updated tool type versions with a beta header:
+### API 配置
+
+使用更新的工具类型版本和 beta 头：
 
 ```json
 {
@@ -239,49 +239,49 @@ Uses updated tool type versions with a beta header:
 }
 ```
 
-**Header required:** `anthropic-beta: code-execution-web-tools-2026-02-09`
+**所需头：** `anthropic-beta: code-execution-web-tools-2026-02-09`
 
-**Enabled by default** when using the new tool type versions with Sonnet 4.6 and Opus 4.6.
+**默认启用**当使用 Sonnet 4.6 和 Opus 4.6 的新工具类型版本时。
 
-### Benchmark Results
+### 基准结果
 
-**BrowseComp** (finding specific information on websites):
+**BrowseComp**（在网站上查找特定信息）：
 
-| Model | Without Filtering | With Filtering | Improvement |
+| 模型 | 无过滤 | 有过滤 | 改进 |
 |-------|-------------------|----------------|-------------|
 | Sonnet 4.6 | 33.3% | **46.6%** | +13.3 pp |
 | Opus 4.6 | 45.3% | **61.6%** | +16.3 pp |
 
-**DeepsearchQA** (multi-step research, F1 score):
+**DeepsearchQA**（多步骤研究，F1 分数）：
 
-| Model | Without Filtering | With Filtering | Improvement |
+| 模型 | 无过滤 | 有过滤 | 改进 |
 |-------|-------------------|----------------|-------------|
 | Sonnet 4.6 | 52.6% | **59.4%** | +6.8 pp |
 | Opus 4.6 | 69.8% | **77.3%** | +7.5 pp |
 
-**Token efficiency:** Average 24% fewer input tokens. Sonnet 4.6 sees cost reduction; Opus 4.6 may increase slightly due to more complex filtering code.
+**Token 效率：** 平均 24% 更少输入 token。Sonnet 4.6 成本降低；Opus 4.6 可能因更复杂的过滤代码而略增。
 
-### Use Cases
+### 用例
 
-- Sifting through technical documentation
-- Verifying citations across multiple sources
-- Cross-referencing search results
-- Multi-step research queries
-- Finding specific data points buried in large pages
+- 筛选技术文档
+- 验证多个来源的引用
+- 交叉引用搜索结果
+- 多步骤研究查询
+- 潜伏在大型页面中的查找特定数据点
 
 ---
 
-## Tool Search Tool
+## 工具搜索工具
 
-### The Problem
+### 问题
 
-Loading all tool definitions upfront wastes context. If you have 50 MCP tools at ~1.5K tokens each, that's 75K tokens before the user even asks a question.
+预先加载所有工具定义会浪费上下文。如果你有 50 个 MCP 工具，每个约 1.5K token，那是 75K token 在用户提问之前。
 
-### The Solution
+### 解决方案
 
-Mark infrequently-used tools with `defer_loading: true`. They're excluded from the initial context. Claude discovers them on-demand via a Tool Search Tool.
+将很少使用的工具标记为 `defer_loading: true`。它们从初始上下文中排除。Claude 通过工具搜索工具按需发现它们。
 
-### Configuration
+### 配置
 
 ```json
 {
@@ -298,49 +298,49 @@ Mark infrequently-used tools with `defer_loading: true`. They're excluded from t
 }
 ```
 
-### Best Practices
+### 最佳实践
 
-- Keep 3-5 most-used tools always loaded, defer the rest
-- Write clear, descriptive tool names and descriptions (search relies on them)
-- Document available capabilities in the system prompt
+- 保持 3-5 个最常用的工具始终加载，其余延迟
+- 编写清晰、描述性的工具名称和描述（搜索依赖它们）
+- 在系统提示词中记录可用能力
 
-### When to Use
+### 何时使用
 
-- Tool definitions consuming > 10K tokens
-- 10+ tools available
-- Multiple MCP servers
-- Tool selection accuracy issues from too many options
+- 工具定义消耗 > 10K token
+- 10+ 个工具可用
+- 多个 MCP 服务器
+- 由于选项太多导致工具选择不准确
 
-### Token Savings
+### Token 节省
 
-~85% reduction in tool definition tokens (77K → 8.7K in Anthropic's benchmarks).
+工具定义 token 减少约 85%（Anthropic 基准中从 77K → 8.7K）。
 
-### Claude Code Equivalent
+### Claude Code 等效项
 
-Claude Code has **MCP tool search auto mode** (enabled by default since v2.1.7). When MCP tool descriptions exceed 10% of context, they're deferred and discovered via `MCPSearch`. Configure the threshold with `ENABLE_TOOL_SEARCH=auto:N` where N is the context percentage (0-100).
+Claude Code 自 v2.1.7 以来有 **MCP 工具搜索自动模式**（默认启用）。当 MCP 工具描述超过上下文的 10% 时，它们被延迟并通过 `MCPSearch` 发现。使用 `ENABLE_TOOL_SEARCH=auto:N` 配置阈值，其中 N 是上下文百分比（0-100）。
 
 ---
 
-## Tool Use Examples
+## 工具使用示例
 
-### The Problem
+### 问题
 
-JSON schemas define structure but can't express:
-- When to include optional parameters
-- Which parameter combinations make sense
-- Format conventions (date formats, ID patterns)
-- Nested structure usage
+JSON 模式定义结构但无法表达：
+- 何时包含可选参数
+- 哪些参数组合有意义
+- 格式约定（日期格式、ID 模式）
+- 嵌套结构的使用
 
-### The Solution
+### 解决方案
 
-Add `input_examples` to tool definitions — concrete usage patterns beyond the schema.
+向工具定义添加 `input_examples` — 超越模式的具体使用模式。
 
-### Configuration
+### 配置
 
 ```json
 {
   "name": "create_ticket",
-  "description": "Create a support ticket",
+  "description": "创建支持工单",
   "input_schema": {
     "type": "object",
     "properties": {
@@ -353,68 +353,68 @@ Add `input_examples` to tool definitions — concrete usage patterns beyond the 
   },
   "input_examples": [
     {
-      "title": "Login page returns 500 error",
+      "title": "登录页面返回 500 错误",
       "priority": "critical",
       "assignee": "oncall-team",
       "labels": ["bug", "auth", "production"]
     },
     {
-      "title": "Add dark mode support",
+      "title": "添加深色模式支持",
       "priority": "low",
       "labels": ["feature-request", "ui"]
     },
     {
-      "title": "Update API docs for v2 endpoints"
+      "title": "更新 v2 端点的 API 文档"
     }
   ]
 }
 ```
 
-### Best Practices
+### 最佳实践
 
-- Use **realistic data**, not placeholder strings like "example_value"
-- Show **variety**: minimal, partial, and full specifications
-- Keep concise: **1-5 examples per tool**
-- Focus on resolving ambiguity — target behavioral clarity over schema completeness
-- Show parameter correlations (e.g., `priority: "critical"` tends to have `assignee`)
+- 使用**真实数据**，而非像 "example_value" 这样的占位符
+- 展示**多样性**：最小、完整和部分规范
+- 保持简洁：**每个工具 1-5 个示例**
+- 专注于解决歧义 — 目标行为清晰而非模式完整
+- 展示参数相关性（例如 `priority: "critical"` 通常有 `assignee`）
 
-### Results
+### 结果
 
-72% → 90% accuracy on complex parameter handling in Anthropic's benchmarks.
+在 Anthropic 基准中，复杂参数处理准确率从 72% 提升到 90%。
 
 ---
 
-## Claude Code Relevance
+## Claude Code 相关性
 
-### What applies directly to Claude Code users
+### 直接适用于 Claude Code 用户的内容
 
-| Feature | Claude Code Status | Action |
+| 功能 | Claude Code 状态 | 操作 |
 |---------|-------------------|--------|
-| Tool Search | Built-in since v2.1.7 as MCPSearch auto mode | Tune `ENABLE_TOOL_SEARCH=auto:N` if you have many MCP tools |
-| Dynamic Filtering | Not available in CLI (API-level web tools) | Relevant for Agent SDK users doing web research |
-| PTC | Not available in CLI | Relevant for Agent SDK users building custom agents |
-| Tool Use Examples | Not configurable in CLI | Relevant for custom MCP server authors |
+| 工具搜索 | 自 v2.1.7 作为 MCPSearch 自动模式内置 | 如果你有许多 MCP 工具，调整 `ENABLE_TOOL_SEARCH=auto:N` |
+| 动态过滤 | CLI 中不可用（API 级 Web 工具） | 与进行 Web 研究的 Agent SDK 用户相关 |
+| PTC | CLI 中不可用 | 与构建自定义代理的 Agent SDK 用户相关 |
+| 工具使用示例 | CLI 中不可配置 | 与自定义 MCP 服务器作者相关 |
 
-### For Agent SDK developers
+### 对于 Agent SDK 开发者
 
-If you're building agents with `@anthropic-ai/claude-agent-sdk`, PTC is immediately actionable:
+如果你使用 `@anthropic-ai/claude-agent-sdk` 构建代理，PTC 可以立即操作：
 
-1. Add `code_execution_20250825` to your tools array
-2. Set `allowed_callers` on tools that benefit from batching/filtering
-3. Implement the tool result loop (pause → provide result → resume)
-4. Return structured data (JSON) from tools for easier programmatic parsing
+1. 将 `code_execution_20250825` 添加到你的工具数组
+2. 在受益于批处理/过滤的工具上设置 `allowed_callers`
+3. 实现工具结果循环（暂停 → 提供结果 → 恢复）
+4. 从工具返回结构化数据（JSON）以便更轻松地编程式解析
 
-### For MCP server authors
+### 对于 MCP 服务器作者
 
-If you're building custom MCP servers, Tool Use Examples can improve how Claude uses your tools:
-- Add `input_examples` to tool schemas
-- Document return formats clearly in descriptions (PTC needs to parse them)
+如果你构建自定义 MCP 工具使用示例可以改善 Claude 使用你的工具的方式：
+- 向工具模式添加 `input_examples`
+- 在描述中清晰记录返回格式（PTC 需要解析它们）
 
 ---
 
-## Sources
+## 来源
 
-- [Anthropic Engineering: Advanced Tool Use](https://www.anthropic.com/engineering/advanced-tool-use)
-- [Programmatic Tool Calling Documentation](https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling)
-- [Code Execution Tool Documentation](https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool)
-- [Improved Web Search with Dynamic Filtering](https://claude.com/blog/improved-web-search-with-dynamic-filtering)
+- [Anthropic 工程：高级工具使用](https://www.anthropic.com/engineering/advanced-tool-use)
+- [编程式工具调用文档](https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling)
+- [代码执行工具文档](https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool)
+- [通过动态过滤改进 Web 搜索](https://claude.com/blog/improved-web-search-with-dynamic-filtering)

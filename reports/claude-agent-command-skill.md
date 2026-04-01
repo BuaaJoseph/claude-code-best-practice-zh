@@ -1,106 +1,106 @@
-# Agents vs Commands vs Skills — When to Use What
+# 子代理、命令与技能——何时使用什么
 
-A comparison of the three extension mechanisms in Claude Code: subagents, commands, and skills.
+Claude Code 中三种扩展机制的对比：子代理、命令和技能。
 
 <table width="100%">
 <tr>
-<td><a href="../">← Back to Claude Code Best Practice</a></td>
+<td><a href="../">← 返回 Claude Code 最佳实践</a></td>
 <td align="right"><img src="../!/claude-jumping.svg" alt="Claude" width="60" /></td>
 </tr>
 </table>
 
-![Slash menu showing time-skill, time-command, and time-agent](assets/agent-command-skill-1.jpg)
+![Slash 菜单显示 time-skill、time-command 和 time-agent](assets/agent-command-skill-1.jpg)
 
 ---
 
-## At a Glance
+## 一览
 
-| | Agent | Command | Skill |
+| | 代理 | 命令 | 技能 |
 |---|---|---|---|
-| **Location** | `.claude/agents/<name>.md` | `.claude/commands/<name>.md` | `.claude/skills/<name>/SKILL.md` |
-| **Context** | Separate subagent process | Inline (main conversation) | Inline (main conversation) |
-| **User-invocable** | No `/` menu — invoked by Claude or via Agent tool | Yes — `/command-name` | Yes — `/skill-name` (unless `user-invocable: false`) |
-| **Auto-invoked by Claude** | Yes — via `description` field | No | Yes — via `description` field (unless `disable-model-invocation: true`) |
-| **Accepts arguments** | Via `prompt` parameter | `$ARGUMENTS`, `$0`, `$1` | `$ARGUMENTS`, `$0`, `$1` |
-| **Dynamic context injection** | No | Yes — `` !`command` `` | Yes — `` !`command` `` |
-| **Own context window** | Yes — isolated | No — shares main | No — shares main (unless `context: fork`) |
-| **Model override** | `model:` frontmatter | `model:` frontmatter | `model:` frontmatter |
-| **Tool restrictions** | `tools:` / `disallowedTools:` | `allowed-tools:` | `allowed-tools:` |
-| **Hooks** | `hooks:` frontmatter | — | `hooks:` frontmatter |
-| **Memory** | `memory:` frontmatter (user/project/local) | — | — |
-| **Can preload skills** | Yes — `skills:` frontmatter | — | — |
-| **MCP servers** | `mcpServers:` frontmatter | — | — |
+| **位置** | `.claude/agents/<名称>.md` | `.claude/commands/<名称>.md` | `.claude/skills/<名称>/SKILL.md` |
+| **上下文** | 独立子代理进程 | 内联（主对话） | 内联（主对话） |
+| **用户可调用** | 否 `/` 菜单 — 由 Claude 或代理工具调用 | 是 — `/command-name` | 是 — `/skill-name`（除非 `user-invocable: false`） |
+| **Claude 自动调用** | 是 — 通过 `description` 字段 | 否 | 是 — 通过 `description` 字段（除非 `disable-model-invocation: true`） |
+| **接受参数** | 通过 `prompt` 参数 | `$ARGUMENTS`、`$0`、`$1` | `$ARGUMENTS`、`$0`、`$1` |
+| **动态上下文注入** | 否 | 是 — `` !`command` `` | 是 — `` !`command` `` |
+| **独立上下文窗口** | 是 — 隔离 | 否 — 共享主会话 | 否 — 共享主会话（除非 `context: fork`） |
+| **模型覆盖** | `model:` 前matter | `model:` 前matter | `model:` 前matter |
+| **工具限制** | `tools:` / `disallowedTools:` | `allowed-tools:` | `allowed-tools:` |
+| **Hooks** | `hooks:` 前matter | — | `hooks:` 前matter |
+| **内存** | `memory:` 前matter（user/project/local） | — | — |
+| **可预加载技能** | 是 — `skills:` 前matter | — | — |
+| **MCP 服务器** | `mcpServers:` 前matter | — | — |
 
 ---
 
-## When to Use Each
+## 何时使用每个
 
-### Use an Agent when:
+### 使用代理当：
 
-- The task is **autonomous and multi-step** — the agent needs to explore, decide, and act without constant guidance
-- You need **context isolation** — the work shouldn't pollute the main conversation window
-- The agent needs **persistent memory** across sessions (e.g., a code reviewer that learns patterns)
-- You want to **preload domain knowledge** via skills without cluttering the main context
-- The task benefits from **running in the background** or in a **git worktree**
-- You need **tool restrictions** or a **different permission mode** (e.g., `acceptEdits`, `plan`)
+- 任务需要**自主多步骤** — 代理需要探索、决策和行动而不需要持续指导
+- 需要**上下文隔离** — 工作不应污染主对话窗口
+- 代理需要**跨会话持久化内存**（例如学习模式的代码审查者）
+- 希望通过技能**预加载领域知识**而不弄乱主上下文
+- 任务受益于**后台运行**或在 **git worktree** 中运行
+- 需要**工具限制**或不同的**权限模式**（例如 `acceptEdits`、`plan`）
 
-**Example**: `weather-agent` — autonomously fetches weather data using its preloaded `weather-fetcher` skill, runs in a separate context with restricted tools.
+**示例**：`weather-agent` — 使用预加载的 `weather-fetcher` 技能自主获取天气数据，在独立上下文中运行并限制工具。
 
-### Use a Command when:
+### 使用命令当：
 
-- You need a **user-initiated entry point** — a workflow the user explicitly triggers
-- The workflow involves **orchestrating** other agents or skills
-- You want to **keep context lean** — command content is not injected into the session context until the user triggers it
+- 需要**用户主动触发的入口点** — 用户明确触发的工作流
+- 工作流涉及**编排**其他代理或技能
+- 希望**保持上下文精简** — 命令内容在用户触发前不注入会话上下文
 
-**Example**: `weather-orchestrator` — the user triggers it, it asks for C/F preference, invokes the agent, then invokes the SVG skill.
+**示例**：`weather-orchestrator` — 用户触发它，询问 C/F 偏好，调用代理，然后调用 SVG 技能。
 
-### Use a Skill when:
+### 使用技能当：
 
-- You want **Claude to auto-invoke** based on user intent — skill descriptions are injected into the session context for semantic matching
-- The task is a **reusable procedure** that can be invoked from multiple places (commands, agents, or Claude itself)
-- You need **agent preloading** — baking domain knowledge into a specific agent at startup
+- 希望 **Claude 根据用户意图自动调用** — 技能描述被注入会话上下文进行语义匹配
+- 任务是一个可从多个地方调用的**可重用过程**（命令、代理或 Claude 本身）
+- 需要**代理预加载** — 在启动时将领域知识烘焙到特定代理中
 
-**Example**: `weather-svg-creator` — Claude auto-invokes it when the user asks for a weather card; also callable from commands.
-
----
-
-## The Command → Agent → Skill Architecture
-
-This repository demonstrates a layered orchestration pattern:
-
-```
-User triggers /command
-    ↓
-Command orchestrates the workflow
-    ↓
-Command invokes Agent (separate context, autonomous)
-    ↓
-Agent uses preloaded Skill (domain knowledge)
-    ↓
-Command invokes Skill (inline, for output generation)
-```
-
-**Concrete example** — the weather system:
-
-```
-/weather-orchestrator (command — entry point, asks C/F)
-    ↓
-weather-agent (agent — fetches temperature autonomously)
-    ├── weather-fetcher (agent skill — preloaded API instructions)
-    ↓
-weather-svg-creator (skill — creates SVG inline)
-```
+**示例**：`weather-svg-creator` — 当用户询问天气卡片时 Claude 自动调用它；也可从命令调用。
 
 ---
 
-## Frontmatter Comparison
+## 命令 → 代理 → 技能架构
 
-### Agent Frontmatter
+该仓库展示了分层编排模式：
+
+```
+用户触发 /command
+    ↓
+Command 编排工作流
+    ↓
+Command 调用代理（独立上下文，自主）
+    ↓
+Agent 使用预加载技能（领域知识）
+    ↓
+Command 调用技能（内联，用于输出生成）
+```
+
+**具体示例** — 天气系统：
+
+```
+/weather-orchestrator（命令 — 入口点，询问 C/F）
+    ↓
+weather-agent（代理 — 自主获取温度）
+    ├── weather-fetcher（代理技能 — 预加载 API 指令）
+    ↓
+weather-svg-creator（技能 — 内联创建 SVG）
+```
+
+---
+
+## 前matter 对比
+
+### 代理前matter
 
 ```yaml
 ---
 name: my-agent
-description: Use this agent PROACTIVELY when...
+description: 当...时主动使用此代理
 tools: Read, Write, Edit, Bash
 model: sonnet
 maxTurns: 10
@@ -111,23 +111,23 @@ skills:
 ---
 ```
 
-### Command Frontmatter
+### 命令前matter
 
 ```yaml
 ---
-description: Do something useful
+description: 做一些有用的事
 argument-hint: [issue-number]
 allowed-tools: Read, Edit, Bash(gh *)
 model: sonnet
 ---
 ```
 
-### Skill Frontmatter
+### 技能前matter
 
 ```yaml
 ---
 name: my-skill
-description: Do something when the user asks for...
+description: 当用户询问...时做...
 argument-hint: [file-path]
 disable-model-invocation: false
 user-invocable: true
@@ -140,71 +140,71 @@ agent: general-purpose
 
 ---
 
-## Key Distinctions
+## 关键区别
 
-### Auto-invocation
+### 自动调用
 
-| Mechanism | Can Claude auto-invoke? | How to prevent |
+| 机制 | Claude 可自动调用？ | 如何防止 |
 |-----------|------------------------|----------------|
-| Agent | Yes — via `description` (use "PROACTIVELY" to encourage it) | Remove or soften the description |
-| Command | No — always user-initiated via `/` | N/A |
-| Skill | Yes — via `description` | Set `disable-model-invocation: true` |
+| 代理 | 是 — 通过 `description`（使用"PROACTIVELY"鼓励） | 移除或软化描述 |
+| 命令 | 否 — 始终由用户通过 `/` 发起 | 不适用 |
+| 技能 | 是 — 通过 `description` | 设置 `disable-model-invocation: true` |
 
-### Visibility in `/` menu
+### 在 `/` 菜单中的可见性
 
-| Mechanism | Appears in `/` menu? | How to hide |
+| 机制 | 出现在 `/` 菜单？ | 如何隐藏 |
 |-----------|---------------------|-------------|
-| Agent | No | N/A |
-| Command | Yes — always | Cannot be hidden |
-| Skill | Yes — by default | Set `user-invocable: false` |
+| 代理 | 否 | 不适用 |
+| 命令 | 是 — 始终 | 无法隐藏 |
+| 技能 | 是 — 默认 | 设置 `user-invocable: false` |
 
-### Context isolation
+### 上下文隔离
 
-| Mechanism | Runs in own context? | How to configure |
+| 机制 | 在自己的上下文中运行？ | 如何配置 |
 |-----------|---------------------|-----------------|
-| Agent | Always | Built-in behavior |
-| Command | Never | N/A |
-| Skill | Optional | Set `context: fork` |
+| 代理 | 始终 | 内置行为 |
+| 命令 | 从不 | 不适用 |
+| 技能 | 可选 | 设置 `context: fork` |
 
 ---
 
-## Worked Example: "What is the current time?"
+## 工作示例："现在几点？"
 
-This repository has all three mechanisms defined for the same task — displaying the current time in PKT. Here's what happens when a user types **"What is the current time?"** without explicitly invoking any `/` command:
+该仓库为同一任务定义了所有三种机制 — 以 PKT 显示当前时间。当用户输入**"现在几点？"**而未明确调用任何 `/` 命令时：
 
-| Mechanism | Will it fire? | Why / Why not |
+| 机制 |会触发？| 为什么/为什么不 |
 |-----------|--------------|---------------|
-| `time-command` | No | Commands are **never auto-invoked**. The user would need to explicitly type `/time-command` for it to run. Commands have no auto-discovery pathway — they are strictly user-initiated. |
-| `time-agent` | **Yes** (possible) | The agent's `description` says *"Use this agent to display the current time in Pakistan Standard Time"*. Claude matches this against the user's intent and may spawn it via the Agent tool. However, agents run in a **separate context window**, making them heavier than necessary for this simple task. |
-| `time-skill` | **Yes** (most likely) | The skill's `description` says *"Display the current time in Pakistan Standard Time (PKT, UTC+5). Use when the user asks for the current time, Pakistan time, or PKT."* Claude matches this and invokes it via the Skill tool. Since it runs **inline** with no context overhead, it's the most efficient match. |
+| `time-command` | 否 | 命令**永远不会自动触发**。用户需要明确输入 `/time-command` 才能运行。命令没有自动发现路径 —— 它们严格由用户发起。 |
+| `time-agent` | **可能** | 代理的 `description` 说*"使用此代理以巴基斯坦标准时间显示当前时间"*。Claude 匹配用户意图并可能通过代理工具生成它。但是，代理在**独立上下文窗口**中运行，使得这个简单任务变得过于重量。 |
+| `time-skill` | **最可能** | 技能的 `description` 说*"以巴基斯坦标准时间（PKT，UTC+5）显示当前时间。当用户询问当前时间、巴基斯坦时间或 PKT 时使用。"* Claude 匹配并通过技能工具调用它。由于它**内联**运行且无上下文开销，是最有效的匹配。 |
 
-### Resolution order
+### 解析顺序
 
-When multiple mechanisms match the same intent, Claude prefers the **lightest-weight option** that satisfies the request:
+当多个机制匹配同一意图时，Claude 偏好**最轻量**满足请求的选项：
 
 ```
-1. Skill (inline, no context overhead)     ← preferred
-2. Agent (separate context, autonomous)    ← used if skill is unavailable or task is complex
-3. Command (never — requires explicit /)   ← only if user types /time-command
+1. 技能（内联，无上下文开销）     ← 首选
+2. 代理（独立上下文，自主）    ← 如果技能不可用或任务复杂则使用
+3. 命令（从不 —— 需要明确 /）   ← 仅当用户输入 /time-command
 ```
 
-### What if `disable-model-invocation: true` were set on the skill?
+### 如果技能上设置 `disable-model-invocation: true` 会怎样？
 
-Then Claude **cannot** auto-invoke the skill. The agent becomes the only auto-invocable option, so Claude would spawn `time-agent` instead — at the cost of a separate context window for a one-liner bash command.
+那么 Claude **无法**自动调用技能。代理成为唯一可自动调用的选项，所以 Claude 会生成 `time-agent` —— 但代价是一个一行 bash 命令需要独立上下文窗口。
 
-### What if both skill and agent had auto-invocation disabled?
+### 如果技能和代理都禁用了自动调用会怎样？
 
-Then **nothing fires automatically**. Claude would fall back to its own general knowledge and likely just run `TZ='Asia/Karachi' date` directly — no extension mechanism involved. The user would need to explicitly type `/time-command` or `/time-skill` to use one.
+那么**没有什么自动触发**。Claude 会回退到自己的常识，可能会直接运行 `TZ='Asia/Karachi' date` —— 不涉及任何扩展机制。用户需要明确输入 `/time-command` 或 `/time-skill` 来使用其中一个。
 
-![Claude auto-invoking time-skill when user asks "What is the current time?"](assets/agent-command-skill-2.png)
+![Claude 在用户询问"现在几��？"时自动调用 time-skill](assets/agent-command-skill-2.png)
 
 ---
 
-## Sources
+## 来源
 
-- [Claude Code Skills — Docs](https://code.claude.com/docs/en/skills)
-- [Claude Code Sub-agents — Docs](https://code.claude.com/docs/en/sub-agents)
-- [Claude Code Slash Commands — Docs](https://code.claude.com/docs/en/slash-commands)
-- [Skills Best Practice](../best-practice/claude-skills.md)
-- [Commands Best Practice](../best-practice/claude-commands.md)
-- [Sub-agents Best Practice](../best-practice/claude-subagents.md)
+- [Claude Code 技能 — 文档](https://code.claude.com/docs/en/skills)
+- [Claude Code 子代理 — 文档](https://code.claude.com/docs/en/sub-agents)
+- [Claude Code 斜杠命令 — 文档](https://code.claude.com/docs/en/slash-commands)
+- [技能最佳实践](../best-practice/claude-skills.md)
+- [命令最佳实践](../best-practice/claude-commands.md)
+- [子代理最佳实践](../best-practice/claude-subagents.md)

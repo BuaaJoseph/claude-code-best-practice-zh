@@ -1,61 +1,61 @@
-# Day 0 — Claude Code Setup
+# 第 0 天 — Claude Code 安装配置
 
-This guide walks you through installing Claude Code on your machine and authenticating so you can start using it.
+本指南将引导您在机器上安装 Claude Code 并完成身份验证，以便开始使用它。
 
-## Step 1: Install Claude Code
+## 步骤 1：安装 Claude Code
 
-Choose your operating system:
+请选择您的操作系统：
 
-| OS | Guide |
-|----|-------|
+| 操作系统 | 安装指南 |
+|----------|----------|
 | Windows | [windows.md](windows.md) |
 | Linux | [linux.md](linux.md) |
 | macOS | [mac.md](mac.md) |
 
-Follow the guide for your OS, then come back here for authentication.
+请按照您操作系统的对应指南进行操作，然后回到本页完成身份验证。
 
 ---
 
-## Step 2: Verify Installation
+## 步骤 2：验证安装
 
-After following your OS-specific guide, confirm everything is working:
+按照对应操作系统的指南完成后，确认一切正常：
 
 ```bash
-node --version    # Should show v18.x or higher
-claude --version  # Should show the installed Claude Code version
+node --version    # 应显示 v18.x 或更高版本
+claude --version  # 应显示已安装的 Claude Code 版本
 ```
 
 ---
 
-## Step 3: Login
+## 步骤 3：登录
 
-<img src="assets/login.png" alt="Claude Code login screen" width="50%">
+<img src="assets/login.png" alt="Claude Code 登录界面" width="50%">
 
-Run `claude` in your terminal. On first launch, it will ask you to choose a login method.
+在终端中运行 `claude`。首次启动时，它会要求您选择登录方式。
 
-### Method 1: Subscription (Claude Pro / Max)
+### 方式 1：订阅（Claude Pro / Max）
 
-- Select **Claude.ai account**
-- Browser opens — sign in and authorize
-- Return to terminal, you're logged in
+- 选择 **Claude.ai 账户**
+- 浏览器会自动打开 — 登录并授权
+- 返回终端，您已登录成功
 
-### Method 2a: API Key (Team Invite)
+### 方式 2a：API 密钥（团队邀请）
 
-Your team admin invites you from the Anthropic dashboard.
+您的团队管理员会在 Anthropic 控制面板向您发送邀请。
 
-- You receive an **invite email** — accept it and create your Anthropic account
-- Run `claude` in your terminal
-- Select **Anthropic API Key**
-- Your key is **auto-generated** on the dashboard — no manual setup needed
-- Claude Code starts working immediately
+- 您会收到**邀请邮件** — 接受邀请并创建您的 Anthropic 账户
+- 在终端中运行 `claude`
+- 选择 **Anthropic API 密钥**
+- 您的密钥会在控制面板**自动生成** — 无需手动设置
+- Claude Code 会立即生效
 
-### Method 2b: API Key (You have the key)
+### 方式 2b：API 密钥（您已持有密钥）
 
-If someone shared the key with you (via Slack, email, etc.) or you created your own:
+如果有人通过 Slack、邮件等方式与您分享了密钥，或者您自己创建了密钥：
 
-- Run `claude` in your terminal
-- Select **Anthropic API Key**
-- Paste your key (starts with `sk-ant-`)
-- The key is **stored permanently** — you won't be asked again
+- 在终端中运行 `claude`
+- 选择 **Anthropic API 密钥**
+- 粘贴您的密钥（以 `sk-ant-` 开头）
+- 密钥会**永久存储** — 不会再提示您输入
 
 ---
