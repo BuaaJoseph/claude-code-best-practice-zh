@@ -1,0 +1,18 @@
+{
+  "title": "Claude Code 最佳实践",
+  "description": "Claude Code 配置最佳实践中文翻译版",
+  "author": "BuaaJoseph",
+  "language": "zh-hans",
+  "gitbook": ">=3.0.0",
+  "root": ".",
+  "links": {
+    "sidebar": {
+      "原项目": "https://github.com/shanraisshan/claude-code-best-practice"
+    }
+  },
+  "plugins": [
+    "theme-default",
+    "-lunr",
+    "-search"
+  ]
+}

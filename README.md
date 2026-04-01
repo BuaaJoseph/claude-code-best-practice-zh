@@ -1,7 +1,9 @@
 # Claude Code 最佳实践
 实践使 Claude 完美
 
-![已更新](https://img.shields.io/badge/updated_with_Claude_Code-v2.1.87%20(Mar%2031%2C%202026%207%3A48%20PM%20PKT)-white?style=flat&labelColor=555) <a href="https://github.com/shanraisshan/claude-code-best-practice/stargazers"><img src="https://img.shields.io/github/stars/shanraisshan/claude-code-best-practice?style=flat&label=%E2%98%85&labelColor=555&color=white" alt="GitHub Stars"></a><br>
+> 📚 本项目是 [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) 的中文翻译版。
+
+![已更新](https://img.shields.io/badge/updated_with_Claude_Code-v2.1.87%20(Mar%2031%2C%202026%207%3A48%20PM%20PKT)-white?style=flat&labelColor=555) <a href="https://github.com/BuaaJoseph/claude-code-best-practice-zh/stargazers"><img src="https://img.shields.io/github/stars/BuaaJoseph/claude-code-best-practice-zh?style=flat&label=%E2%98%85&labelColor=555&color=white" alt="GitHub Stars"></a><br>
 
 [![Best Practice](!/tags/best-practice.svg)](best-practice/) [![Implemented](!/tags/implemented.svg)](implementation/) [![Orchestration Workflow](!/tags/orchestration-workflow.svg)](orchestration-workflow/orchestration-workflow.md) [![Boris](!/tags/boris-cherny.svg)](#-tips-and-tricks) ![Click on these badges below to see the actual sources](!/tags/click-badges.svg)<br>
 <img src="!/tags/a.svg" height="14"> = Agents · <img src="!/tags/c.svg" height="14"> = 命令 · <img src="!/tags/s.svg" height="14"> = 技能
