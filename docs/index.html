@@ -6,22 +6,8 @@
   <title>Claude Code 最佳实践</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
   <style>
-    :root {
-      --theme-color: #667eea;
-      --sidebar-nav-link-color: #333;
-    }
-    .sidebar-nav > a:hover, .sidebar-nav > a.active {
-      color: var(--theme-color) !important;
-    }
-    .markdown-section h1 {
-      color: var(--theme-color);
-      border-bottom: 2px solid var(--theme-color);
-      padding-bottom: 10px;
-    }
-    .app-name-link {
-      font-size: 1.5rem !important;
-      font-weight: bold;
-    }
+    :root { --theme-color: #667eea; }
+    .markdown-section h1 { color: var(--theme-color); border-bottom: 2px solid var(--theme-color); padding-bottom: 10px; }
   </style>
 </head>
 <body>
@@ -33,28 +19,11 @@
       loadSidebar: '_sidebar.md',
       subMaxLevel: 2,
       auto2top: true,
-      maxLevel: 3,
-      formatUpdated: '{YYYY}/{MM}/{DD}',
-      search: {
-        maxAge: 86400000,
-        paths: 'auto',
-        placeholder: '🔍 搜索文档'
-      },
-      pagination: {
-        previousText: '← 上一页',
-        nextText: '下一页 →',
-        crossChapter: true
-      },
-      copyCode: {
-        buttonText: '📋 复制',
-        errorText: '复制失败',
-        successText: '已复制!'
-      }
+      search: { maxAge: 86400000, paths: 'auto', placeholder: '🔍 搜索' }
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify-search/dist/docsify-search.min.js"></script>
 </body>
 </html>
