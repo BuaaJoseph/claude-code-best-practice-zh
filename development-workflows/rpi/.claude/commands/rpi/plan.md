@@ -1,416 +1,416 @@
 ---
-description: Create comprehensive planning documentation for a feature
+description: 为功能创建全面的规划文档
 argument-hint: "<feature-slug>"
 ---
 
-## User Input
+## 用户输入
 
 ```text
 $ARGUMENTS
 ```
 
-You **MUST** parse the user input to extract the feature slug (the folder name in `rpi/`).
+你**必须**解析用户输入以提取功能 slug（`rpi/` 中的文件夹名称）。
 
-## Purpose
+## 目的
 
-This command creates comprehensive planning documentation for a feature request. It generates detailed specifications, technical design, and implementation plans in the feature's RPI folder.
+此命令为功能请求创建全面的规划文档。它在功能的 RPI 文件夹中生成详细规范、技术设计和实施计划。
 
-**Prerequisites**:
-- Feature folder exists at `rpi/{feature-slug}/`
-- Research completed with GO recommendation (`rpi/{feature-slug}/research/RESEARCH.md` exists)
+**前置条件**：
+- 功能文件夹存在于 `rpi/{feature-slug}/`
+- 研究完成并获得 GO 建议（`rpi/{feature-slug}/research/RESEARCH.md` 存在）
 
-**Output Location**: All files saved to `rpi/{feature-slug}/plan/`
+**输出位置**：所有文件保存到 `rpi/{feature-slug}/plan/`
 
-**This is Step 3 of the RPI Workflow** (after Research approves with GO).
+**这是 RPI 工作流的步骤 3**（研究批准 GO 之后）。
 
-## Outline
+## 大纲
 
-1. **Load Context**: Read research report and project constitution (if exists)
-2. **Understand Requirements**: Parse feature scope and requirements
-3. **Analyze Technical Requirements**: Review architecture and dependencies
-4. **Design Architecture**: Create high-level architecture and API contracts
-5. **Break Down Implementation**: Create phased task breakdown
-6. **Generate Documentation**: Create structured documentation files
-7. **Validate Output**: Ensure all quality gates pass
-8. **Report Completion**: Provide summary and next steps
+1. **加载上下文**：读取研究报告和项目宪法（如果存在）
+2. **理解需求**：解析功能范围和需求
+3. **分析技术需求**：审查架构和依赖项
+4. **设计架构**：创建高级架构和 API 契约
+5. **分解实施**：创建分阶段的任务分解
+6. **生成文档**：创建结构化文档文件
+7. **验证输出**：确保所有质量关卡通过
+8. **报告完成**：提供摘要和下一步
 
-## Phases
+## 阶段
 
-### Phase 0: Load Context
+### 阶段 0：加载上下文
 
-**Prerequisites**: Feature slug provided
+**前置条件**：提供了功能 slug
 
-**Process**:
-1. **Verify research completed**:
-   - Check `rpi/{feature-slug}/research/RESEARCH.md` exists
-   - Verify GO recommendation (warn if NO-GO or CONDITIONAL)
+**流程**：
+1. **验证研究完成**：
+   - 检查 `rpi/{feature-slug}/research/RESEARCH.md` 存在
+   - 验证 GO 建议（如果是 NO-GO 或 CONDITIONAL 则警告）
 
-2. **Read research findings**:
-   - Extract product analysis
-   - Extract technical discovery
-   - Extract technical feasibility assessment
-   - Note risks and constraints
+2. **读取研究发现**：
+   - 提取产品分析
+   - 提取技术发现
+   - 提取技术可行性评估
+   - 注意风险和约束
 
-3. **Load project constitution** (if exists):
-   - Look for a constitution or principles document in the repository
-   - Extract relevant constraints and preferences
+3. **加载项目宪法**（如果存在）：
+   - 在代码库中查找宪法或原则文档
+   - 提取相关约束和偏好
 
-**Outputs**:
-- Research summary
-- Constitutional context (if found)
-- Planning constraints
+**输出**：
+- 研究摘要
+- 宪法上下文（如果找到）
+- 规划约束
 
-**Validation**:
-- [ ] Research report exists
-- [ ] GO recommendation confirmed
-- [ ] Constitution loaded (if exists)
-
----
-
-### Phase 1: Understand Feature Requirements
-
-**Prerequisites**: Phase 0 complete
-
-**Process**:
-1. **Parse Feature Description** from research report:
-   - Extract feature name and primary goal
-   - Identify target component(s)
-   - Understand user-facing vs. technical feature
-   - Determine feature complexity level
-
-2. **Identify Affected Components**:
-   - Primary component (where feature lives)
-   - Secondary components (integration points)
-   - Shared utilities needed
-   - External dependencies
-
-3. **Research Existing Patterns**:
-   - Search for similar features in codebase
-   - Review component architecture and patterns
-   - Identify reusable code and patterns
-
-**Outputs**:
-- Feature scope document (internal)
-- Affected components list
-- Existing patterns catalog
-
-**Validation**:
-- [ ] Feature name and goal clearly defined
-- [ ] Target component(s) identified
-- [ ] Feature complexity assessed
+**验证**：
+- [ ] 研究报告存在
+- [ ] GO 建议已确认
+- [ ] 宪法已加载（如果存在）
 
 ---
 
-### Phase 2: Analyze Technical Requirements
+### 阶段 1：理解功能需求
 
-**Prerequisites**: Phase 1 complete
+**前置条件**：阶段 0 完成
 
-**Process**:
-1. **Review Component Architecture**:
-   - Read component README and documentation
-   - Review existing code structure
-   - Identify architectural patterns used
+**流程**：
+1. **从研究报告中解析功能描述**：
+   - 提取功能名称和主要目标
+   - 识别目标组件
+   - 理解面向用户的 vs 技术功能
+   - 确定功能复杂性级别
 
-2. **Identify Technical Dependencies**:
-   - Internal dependencies (other components, shared utilities)
-   - External dependencies (APIs, services, libraries)
-   - Database/storage requirements
-   - Authentication/authorization needs
+2. **识别受影响的组件**：
+   - 主要组件（功能所在的位置）
+   - 辅助组件（集成点）
+   - 需要的共享工具
+   - 外部依赖项
 
-3. **Assess Integration Points**:
-   - APIs that need to be created or modified
-   - Database schema changes required
-   - Event/message flows
-   - Frontend-backend integration
+3. **研究现有模式**：
+   - 在代码库中搜索类似功能
+   - 审查组件架构和模式
+   - 识别可复用的代码和模式
 
-4. **Evaluate Technical Risks**:
-   - Breaking changes to existing features
-   - Performance implications
-   - Security concerns
-   - Data migration needs
+**输出**：
+- 功能范围文档（内部）
+- 受影响组件列表
+- 现有模式目录
 
-**Outputs**:
-- Technical requirements document (internal)
-- Dependency map
-- Integration point diagram
-- Risk assessment
-
-**Validation**:
-- [ ] Component architecture understood
-- [ ] All dependencies identified
-- [ ] Integration points mapped
-- [ ] Technical risks assessed
+**验证**：
+- [ ] 功能名称和目标已明确定义
+- [ ] 目标组件已识别
+- [ ] 功能复杂性已评估
 
 ---
 
-### Phase 3: Design Feature Architecture
+### 阶段 2：分析技术需求
 
-**Prerequisites**: Phases 1-2 complete
+**前置条件**：阶段 1 完成
 
-**Agent**: senior-software-engineer
+**流程**：
+1. **审查组件架构**：
+   - 阅读组件 README 和文档
+   - 审查现有代码结构
+   - 识别使用的架构模式
 
-**Process**:
-1. **Design High-Level Architecture**:
-   - Component/module structure
-   - Data flow diagrams
-   - API interfaces
-   - Database schema changes
+2. **识别技术依赖项**：
+   - 内部依赖项（其他组件、共享工具）
+   - 外部依赖项（API、服务、库）
+   - 数据库/存储需求
+   - 认证/授权需求
 
-2. **Define Implementation Approach**:
-   - File structure and organization
-   - Code organization patterns
-   - Testing strategy
-   - Error handling approach
+3. **评估集成点**：
+   - 需要创建或修改的 API
+   - 需要的数据库模式更改
+   - 事件/消息流
+   - 前端-后端集成
 
-3. **Plan Database/Storage Changes** (if applicable):
-   - New collections/tables
-   - Schema modifications
-   - Migration strategy
-   - Data validation rules
+4. **评估技术风险**：
+   - 对现有功能的破坏性更改
+   - 性能影响
+   - 安全问题
+   - 数据迁移需求
 
-4. **Design API Contracts** (if applicable):
-   - Request/response formats
-   - Authentication requirements
-   - Error responses
+**输出**：
+- 技术需求文档（内部）
+- 依赖项映射
+- 集成点图表
+- 风险评估
 
-5. **Plan Testing Strategy**:
-   - Unit test requirements
-   - Integration test scenarios
-   - End-to-end test cases
-
-**Outputs**:
-- Architecture design document (internal)
-- API specifications
-- Database schema design
-- Testing strategy
-
-**Validation**:
-- [ ] High-level architecture designed
-- [ ] Implementation approach defined
-- [ ] Database changes planned (if needed)
-- [ ] API contracts specified (if needed)
-- [ ] Testing strategy complete
+**验证**：
+- [ ] 组件架构已理解
+- [ ] 所有依赖项已识别
+- [ ] 集成点已映射
+- [ ] 技术风险已评估
 
 ---
 
-### Phase 4: Break Down Implementation Tasks
+### 阶段 3：设计功能架构
 
-**Prerequisites**: Phases 1-3 complete
+**前置条件**：阶段 1-2 完成
 
-**Process**:
-1. **Identify Implementation Phases**:
-   - Break feature into 3-5 logical phases
-   - Each phase should deliver working, testable functionality
-   - Phases should build on each other progressively
+**Agent**：senior-software-engineer
 
-2. **Create Task Breakdown for Each Phase**:
-   - List specific implementation tasks
-   - Estimate complexity (Low/Medium/High)
-   - Identify task dependencies
-   - Assign to appropriate code areas
+**流程**：
+1. **设计高级架构**：
+   - 组件/模块结构
+   - 数据流图
+   - API 接口
+   - 数据库模式更改
 
-3. **Define Success Criteria**:
-   - Acceptance criteria for each phase
-   - Testing requirements
-   - Documentation requirements
+2. **定义实施方法**：
+   - 文件结构和组织
+   - 代码组织模式
+   - 测试策略
+   - 错误处理方法
 
-4. **Identify Parallelization Opportunities**:
-   - Tasks that can be done concurrently
-   - Frontend/backend parallel work
-   - Independent module development
+3. **规划数据库/存储更改**（如适用）：
+   - 新集合/表
+   - 模式修改
+   - 迁移策略
+   - 数据验证规则
 
-**Outputs**:
-- Phased implementation plan
-- Task breakdown with estimates
-- Success criteria per phase
-- Dependency chart
+4. **设计 API 契约**（如适用）：
+   - 请求/响应格式
+   - 认证要求
+   - 错误响应
 
-**Validation**:
-- [ ] Feature broken into 3-5 logical phases
-- [ ] Each phase has specific tasks
-- [ ] All tasks have complexity estimates
-- [ ] Dependencies clearly marked
-- [ ] Success criteria defined
+5. **规划测试策略**：
+   - 单元测试需求
+   - 集成测试场景
+   - 端到端测试用例
 
----
+**输出**：
+- 架构设计文档（内部）
+- API 规范
+- 数据库模式设计
+- 测试策略
 
-### Phase 5: Generate Documentation
-
-**Prerequisites**: Phases 1-4 complete
-
-**Agent**: documentation-analyst-writer (via Task tool)
-
-**Process**:
-1. **Generate pm.md** (Product Requirements):
-   - Feature description and user stories
-   - Constitutional alignment (if applicable)
-   - Business value and success metrics
-   - User personas and use cases
-   - Acceptance criteria
-   - Out of scope items
-
-2. **Generate ux.md** (User Experience Design):
-   - User interface mockups (text description)
-   - User flows and interactions
-   - Accessibility considerations
-   - Error states and edge cases
-
-3. **Generate eng.md** (Technical Specification):
-   - Architecture design
-   - API specifications
-   - Database schema changes
-   - Technology stack
-   - Technical risks and mitigation
-
-4. **Generate PLAN.md** (Implementation Roadmap):
-   - Phased implementation breakdown
-   - Task list with estimates per phase
-   - Dependencies and ordering
-   - Success criteria per phase
-   - Testing requirements
-   - Validation checkpoints
-
-**Output Files** (all saved to `rpi/{feature-slug}/plan/`):
-- `pm.md` - Product requirements
-- `ux.md` - UX design
-- `eng.md` - Technical specification
-- `PLAN.md` - Detailed implementation roadmap
-
-**Validation**:
-- [ ] All 4 files present (pm, ux, eng, PLAN)
-- [ ] pm.md covers business requirements
-- [ ] ux.md addresses user experience
-- [ ] eng.md provides technical specification
-- [ ] PLAN.md has phased implementation
-- [ ] No placeholder text remains
-- [ ] Markdown formatting is clean
+**验证**：
+- [ ] 高级架构已设计
+- [ ] 实施方法已定义
+- [ ] 数据库更改已规划（如需要）
+- [ ] API 契约已指定（如需要）
+- [ ] 测试策略已完成
 
 ---
 
-## Sub-Agent Delegation
+### 阶段 4：分解实施任务
 
-This command orchestrates specialist agents:
+**前置条件**：阶段 1-3 完成
 
-| Phase | Agent | Type | Purpose |
+**流程**：
+1. **识别实施阶段**：
+   - 将功能分解为 3-5 个逻辑阶段
+   - 每个阶段应交付可工作、可测试的功能
+   - 阶段应逐步相互构建
+
+2. **为每个阶段创建任务分解**：
+   - 列出具体的实施任务
+   - 估算复杂性（低/中/高）
+   - 识别任务依赖项
+   - 分配到适当的代码区域
+
+3. **定义成功标准**：
+   - 每个阶段的验收标准
+   - 测试需求
+   - 文档需求
+
+4. **识别并行化机会**：
+   - 可以同时执行的任务
+   - 前端/后端并行工作
+   - 独立模块开发
+
+**输出**：
+- 分阶段实施计划
+- 带估算的任务分解
+- 每个阶段成功标准
+- 依赖关系图
+
+**验证**：
+- [ ] 功能分解为 3-5 个逻辑阶段
+- [ ] 每个阶段有具体任务
+- [ ] 所有任务有复杂性估算
+- [ ] 依赖关系已明确标记
+- [ ] 成功标准已定义
+
+---
+
+### 阶段 5：生成文档
+
+**前置条件**：阶段 1-4 完成
+
+**Agent**：documentation-analyst-writer（通过 Task tool）
+
+**流程**：
+1. **生成 pm.md**（产品需求）：
+   - 功能描述和用户故事
+   - 宪法一致性（如果适用）
+   - 业务价值和成功指标
+   - 用户画像和用例
+   - 验收标准
+   - 范围外项目
+
+2. **生成 ux.md**（用户体验设计）：
+   - 用户界面 mockup（文本描述）
+   - 用户流程和交互
+   - 可访问性考虑
+   - 错误状态和边缘情况
+
+3. **生成 eng.md**（技术规范）：
+   - 架构设计
+   - API 规范
+   - 数据库模式更改
+   - 技术栈
+   - 技术风险和缓解
+
+4. **生成 PLAN.md**（实施路线图）：
+   - 分阶段实施分解
+   - 每个阶段的任务列表和估算
+   - 依赖关系和顺序
+   - 每个阶段成功标准
+   - 测试需求
+   - 验证检查点
+
+**输出文件**（全部保存到 `rpi/{feature-slug}/plan/`）：
+- `pm.md` - 产品需求
+- `ux.md` - UX 设计
+- `eng.md` - 技术规范
+- `PLAN.md` - 详细实施路线图
+
+**验证**：
+- [ ] 所有 4 个文件存在（pm、ux、eng、PLAN）
+- [ ] pm.md 涵盖业务需求
+- [ ] ux.md 解决用户体验
+- [ ] eng.md 提供技术规范
+- [ ] PLAN.md 有分阶段实施
+- [ ] 没有占位符文本
+- [ ] Markdown 格式整洁
+
+---
+
+## 子 Agent 委托
+
+此命令编排专业 agent：
+
+| 阶段 | Agent | 类型 | 目的 |
 |-------|-------|------|---------|
-| Phase 3 | senior-software-engineer | Custom | Architecture design |
-| Phase 5 | product-manager | Custom | Product requirements (pm.md) |
-| Phase 5 | ux-designer | Custom | User experience (ux.md) |
-| Phase 5 | senior-software-engineer | Custom | Technical spec (eng.md) |
-| Phase 5 | documentation-analyst-writer | Built-in | Documentation synthesis |
+| 阶段 3 | senior-software-engineer | 自定义 | 架构设计 |
+| 阶段 5 | product-manager | 自定义 | 产品需求 (pm.md) |
+| 阶段 5 | ux-designer | 自定义 | 用户体验 (ux.md) |
+| 阶段 5 | senior-software-engineer | 自定义 | 技术规范 (eng.md) |
+| 阶段 5 | documentation-analyst-writer | 内置 | 文档综合 |
 
-### Agent Invocation
+### Agent 调用
 
-**Custom Agents** (product-manager, senior-software-engineer, ux-designer):
-- Claude Code automatically detects these from `.claude/agents/`
-- Reference them naturally: "Acting as the senior-software-engineer agent..."
-- NO Task tool invocation needed
+**自定义 Agent**（product-manager、senior-software-engineer、ux-designer）：
+- Claude Code 自动从 `.claude/agents/` 中检测这些
+- 自然引用："作为 senior-software-engineer agent..."
+- 不需要 Task tool 调用
 
-**Built-in Agent** (documentation-analyst-writer):
-- Use Task tool with `subagent_type="documentation-analyst-writer"`
-
----
-
-## Completion Report
-
-Report the following on successful completion:
-
-### Outputs Created
-
-**Documentation Folder**: `rpi/{feature-slug}/plan/`
-
-Files created:
-- **pm.md**: Product requirements and user stories ({Y} stories)
-- **ux.md**: User experience design ({Z} flows)
-- **eng.md**: Technical specification ({A} APIs, {B} schema changes)
-- **PLAN.md**: Detailed roadmap ({C} phases, {D} tasks)
-
-### Feature Summary
-
-- **Feature Name**: {feature-name}
-- **Target Component**: {component-name}
-- **Complexity**: {Simple/Medium/Complex}
-- **Implementation Phases**: {N} phases
-- **Total Tasks**: {M} tasks
-- **Dependencies**: {Y} internal, {Z} external
-
-### Technical Overview
-
-- **Architecture Pattern**: {pattern-name}
-- **APIs Added/Modified**: {N} APIs
-- **Database Changes**: {Y} collections/tables
-- **Testing Requirements**: {Z} test suites
-- **Risk Level**: {Low/Medium/High}
-
-### Implementation Phases
-
-1. **Phase 1**: {phase-name} - {task-count} tasks
-2. **Phase 2**: {phase-name} - {task-count} tasks
-3. **Phase 3**: {phase-name} - {task-count} tasks
-[Continue for all phases...]
+**内置 Agent**（documentation-analyst-writer）：
+- 使用 Task tool，参数 `subagent_type="documentation-analyst-writer"`
 
 ---
 
-### Next Steps
+## 完成报告
 
-1. **Review Documentation**:
-   - Read planning docs in `rpi/{feature-slug}/plan/`
-   - Review technical spec in `eng.md`
-   - Understand implementation phases in `PLAN.md`
+成功完成时报告以下内容：
 
-2. **Validate with Stakeholders**:
-   - Product review of pm.md
-   - UX review of ux.md
-   - Technical review of eng.md
+### 创建的输出
 
-3. **Begin Implementation**:
-   - Run `/rpi:implement "{feature-slug}"` to execute phased implementation
-   - Follow PLAN.md phases
-   - Complete validation gates at each phase
+**文档文件夹**：`rpi/{feature-slug}/plan/`
 
----
+创建的文件：
+- **pm.md**：产品需求和用户故事（{Y} 个故事）
+- **ux.md**：用户体验设计（{Z} 个流程）
+- **eng.md**：技术规范（{A} 个 API，{B} 个模式更改）
+- **PLAN.md**：详细路线图（{C} 个阶段，{D} 个任务）
 
-## Error Handling
+### 功能摘要
 
-**If research report doesn't exist**:
-- Action: Stop and inform user
-- Message: "Research report not found. Run `/rpi:research` first."
+- **功能名称**：{feature-name}
+- **目标组件**：{component-name}
+- **复杂性**：简单/中等/复杂
+- **实施阶段**：{N} 个阶段
+- **总任务数**：{M} 个任务
+- **依赖项**：{Y} 个内部，{Z} 个外部
 
-**If research recommendation is NO-GO**:
-- Action: Warn user but allow proceeding
-- Message: "Research recommended NO-GO. Proceed anyway? (y/n)"
+### 技术概览
 
-**If target component doesn't exist**:
-- Action: Confirm with user if this is a new component
-- Message: "Component not found. Is this a new component?"
+- **架构模式**：{pattern-name}
+- **添加/修改的 API**：{N} 个
+- **数据库更改**：{Y} 个集合/表
+- **测试需求**：{Z} 个测试套件
+- **风险级别**：低/中/高
 
-**If documentation agent fails**:
-- Action: Generate documentation directly
-- Warning: "Documentation may not fully adhere to standards"
+### 实施阶段
 
----
-
-## Notes
-
-- **Prerequisites**: Research completed with GO recommendation
-- **Part of RPI Workflow**: Step 3 of 4 (Describe → Research → Plan → Implement)
-
-**Best Practices**:
-1. **Review Research First**: Ensure you understand the viability assessment
-2. **Leverage Discovery**: Use technical discovery from research phase
-3. **Be Specific**: Detailed plans lead to smoother implementation
-4. **Validate Early**: Review docs before implementing
+1. **阶段 1**：{phase-name} - {task-count} 个任务
+2. **阶段 2**：{phase-name} - {task-count} 个任务
+3. **阶段 3**：{phase-name} - {task-count} 个任务
+[继续所有阶段...]
 
 ---
 
-## Post-Completion Action
+### 下一步
 
-**IMPORTANT**: After completing the planning workflow, ALWAYS prompt the user to compact the conversation:
+1. **审查文档**：
+   - 阅读 `rpi/{feature-slug}/plan/` 中的规划文档
+   - 审查 `eng.md` 中的技术规范
+   - 理解 `PLAN.md` 中的实施阶段
 
-> **Context Management**: This planning workflow consumed significant context. To free up space for implementation, please run:
+2. **与利益相关者验证**：
+   - pm.md 的产品审查
+   - ux.md 的 UX 审查
+   - eng.md 的技术审查
+
+3. **开始实施**：
+   - 运行 `/rpi:implement "{feature-slug}"` 执行分阶段实施
+   - 遵循 PLAN.md 阶段
+   - 在每个阶段完成验证关卡
+
+---
+
+## 错误处理
+
+**如果研究报告不存在**：
+- 操作：停止并告知用户
+- 消息："未找到研究报告。请先运行 `/rpi:research`。"
+
+**如果研究建议是 NO-GO**：
+- 操作：警告用户但允许继续
+- 消息："研究建议 NO-GO。仍然继续？（y/n）"
+
+**如果目标组件不存在**：
+- 操作：确认这是否是 新组件
+- 消息："未找到组件。这是一个新组件吗？"
+
+**如果文档 agent 失败**：
+- 操作：直接生成文档
+- 警告："文档可能未完全遵守标准"
+
+---
+
+## 备注
+
+- **前置条件**：研究完成并获得 GO 建议
+- **RPI 工作流的一部分**：4 步中的步骤 3（描述 → 研究 → 规划 → 实施）
+
+**最佳实践**：
+1. **首先审查研究**：确保你理解可行性评估
+2. **利用发现**：使用研究阶段的技术发现
+3. **具体化**：详细计划带来更顺畅的实施
+4. **尽早验证**：实施前审查文档
+
+---
+
+## 完成后操作
+
+**重要**：完成规划工作流后，**始终**提示用户压缩对话：
+
+> **上下文管理**：此规划工作流消耗了大量上下文。为释放实施空间，请运行：
 >
 > ```
 > /compact
 > ```
 >
-> This will summarize the conversation and preserve the planning decisions while reducing token usage for the implementation phase.
+> 这将总结对话并在减少后续命令 token 使用的同时保留规划决策。

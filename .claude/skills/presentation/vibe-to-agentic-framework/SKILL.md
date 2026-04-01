@@ -1,38 +1,38 @@
 ---
 name: vibe-to-agentic-framework
-description: The conceptual framework behind the presentation — what "Vibe Coding to Agentic Engineering" means, why the journey is structured the way it is, and how every slide fits the narrative arc
+description: 演示文稿背后的概念框架——"从Vibe Coding到代理工程"的含义、旅程为何如此结构化、以及每张幻灯片如何符合叙事弧线
 ---
 
-# The "Vibe Coding to Agentic Engineering" Framework
+# "从Vibe Coding到代理工程"框架
 
-This skill teaches the **conceptual model** behind the presentation. Every slide and section exists to tell a single story: how a developer incrementally moves from unstructured "vibe coding" (Low level) to high-level agentic engineering (High level).
+此技能教授演示文稿背后的**概念模型**。每张幻灯片和章节都讲述一个故事：开发者如何逐步从无结构的"vibe coding"（低级）迈向高级代理工程（高级）。
 
-## Core Concept
+## 核心概念
 
-**Vibe Coding (Low level)** is when a developer uses Claude Code with no structure — no project context, no conventions, no reusable knowledge. Every prompt is a coin flip. Claude might create random endpoints, ignore existing patterns, skip tests, and produce inconsistent code. The codebase drifts toward entropy with every interaction.
+**Vibe Coding（低级）**是指开发者使用Claude Code但没有任何结构——没有项目上下文、没有约定、没有可复用知识。每个提示都是抛硬币。Claude可能会创建随机端点、忽略现有模式、跳过测试，产生不一致的代码。代码库随着每次交互趋向熵增。
 
-**Agentic Engineering (High level)** is when Claude Code operates as a fully configured engineering system. It knows the project architecture (CLAUDE.md), follows scoped conventions (Rules), loads domain expertise on demand (Skills), delegates to specialized workers (Agents), orchestrates multi-step workflows (Commands), automates lifecycle events (Hooks), and connects to external tools (MCP Servers). Every prompt produces consistent, tested, production-quality code.
+**Agentic Engineering（高级）**是指Claude Code作为完全配置的工程系统运行。它知道项目架构（CLAUDE.md）、遵循作用域约定（Rules）、按需加载领域专业知识（Skills）、委托给专业 worker（Agents）、编排多步骤工作流（Commands）、自动化生命周期事件（Hooks）、连接外部工具（MCP Servers）。每个提示都产生一致、经过测试的生产级代码。
 
-The journey between these two extremes is **incremental and cumulative**. Each best practice builds on the previous ones, and the presentation teaches them in the order a developer should adopt them.
+这两个极端之间的旅程是**渐进式和累积性的**。每个最佳实践都建立在前一个之上，演示文稿按照开发者应该采用的顺序来教授。
 
-## The 4-Level Journey System
+## 4级旅程系统
 
-The presentation uses a 4-level scoring system instead of a percentage bar:
+演示文稿使用4级评分系统而非百分比条：
 
-| Level | Order | Color | Journey Bar Height | Description |
+| 级别 | 顺序 | 颜色 | 旅程条高度 | 描述 |
 |-------|-------|-------|--------------------|-------------|
-| Low | 1 | Red/orange (`hsl(0, 70%, 45%)`) | 25% | Vibe coding territory — no structure |
-| Medium | 2 | Yellow (`hsl(40, 70%, 45%)`) | 50% | Structured workflows, some automation |
-| High | 3 | Light green (`hsl(80, 70%, 45%)`) | 75% | Domain knowledge, skills, custom agents |
-| Pro | 4 | Deep green (`hsl(120, 70%, 45%)`) | 100% | Full agentic engineering, multi-agent teams |
+| Low | 1 | 红色/橙色 (`hsl(0, 70%, 45%)`) | 25% | Vibe coding领地——无结构 |
+| Medium | 2 | 黄色 (`hsl(40, 70%, 45%)`) | 50% | 结构化工作流，部分自动化 |
+| High | 3 | 浅绿色 (`hsl(80, 70%, 45%)`) | 75% | 领域知识、技能、自定义代理 |
+| Pro | 4 | 深绿色 (`hsl(120, 70%, 45%)`) | 100% | 完整代理工程，多代理团队 |
 
-The journey bar is hidden on slide 1 (title slide) and appears from slide 2 onward. Levels are set via `data-level` attributes on key transition slides and inherited by subsequent slides until the next level change. A `.level-badge` is JS-injected on the slide's `h1` when the level changes (do not hardcode these in HTML).
+旅程条在幻灯片1（标题幻灯片）隐藏，从幻灯片2开始显示。级别通过关键过渡幻灯片上的 `data-level` 属性设置，随后幻灯片继承该级别直到下一个级别变化。当级别变化时，`.level-badge` 由JS注入到幻灯片的 `h1` 中（不要在HTML中硬编码这些）。
 
-## The Running Example: TodoApp Monorepo
+## 运行示例：TodoApp Monorepo
 
-Every technique is demonstrated on a realistic full-stack project. The presentation shows the transformation from a plain project (vibe coding) to one with full Claude Code configuration (agentic engineering):
+每种技术都在一个现实的全栈项目中演示。演示文稿展示了从纯项目（vibe coding）到完整Claude Code配置（代理工程）的转变：
 
-**Before (Vibe Coding):**
+**之前（Vibe Coding）：**
 ```
 todoapp/
 ├── backend/          # FastAPI (Python)
@@ -46,125 +46,125 @@ todoapp/
     └── lib/
 ```
 
-**After (Agentic Engineering):**
+**之后（Agentic Engineering）：**
 ```
 todoapp/
-├── .claude/                  # Claude Code config
-│   ├── agents/               # Custom subagents
-│   ├── skills/               # Domain knowledge
-│   ├── commands/             # Slash commands
-│   ├── hooks/                # Lifecycle scripts
-│   ├── rules/                # Modular instructions
-│   ├── settings.json         # Team settings
-│   └── settings.local.json   # Personal settings
+├── .claude/                  # Claude Code 配置
+│   ├── agents/               # 自定义子代理
+│   ├── skills/               # 领域知识
+│   ├── commands/            # 斜杠命令
+│   ├── hooks/                # 生命周期脚本
+│   ├── rules/                # 模块化指令
+│   ├── settings.json         # 团队设置
+│   └── settings.local.json   # 个人设置
 ├── backend/
-│   └── CLAUDE.md             # Backend instructions
+│   └── CLAUDE.md             # 后端指令
 ├── frontend/
-│   └── CLAUDE.md             # Frontend instructions
-├── .mcp.json                 # Managed MCP servers
-└── CLAUDE.md                 # Project instructions
+│   └── CLAUDE.md             # 前端指令
+├── .mcp.json                 # 管理的MCP服务器
+└── CLAUDE.md                 # 项目指令
 ```
 
-**Why TodoApp?** It's small enough to fit on slides but complex enough to demonstrate real problems: a backend with route patterns and test conventions, a frontend with component hierarchy and design tokens, and a monorepo structure where cross-cutting concerns (like adding a new feature) require coordination between both sides.
+**为什么选TodoApp？** 它足够小以适应幻灯片，但足够复杂以展示真实问题：一个后端有路由模式和测试约定，一个前端有组件层次结构和设计代币，以及一个需要跨领域关注点协调（如添加新功能）的monorepo结构。
 
-The TodoApp makes the vibe-coding problem concrete: without structure, asking Claude to "add a notes feature" produces a random `/api/notes` endpoint that doesn't follow `routes/todos.py` patterns, a standalone page with no sidebar navigation, and zero tests. With full agentic setup, the same request produces a route following existing patterns, a page integrated into the sidebar, and tests matching `test_todos.py` style.
+TodoApp使vibe-coding问题具体化：没有结构时，要求Claude"添加笔记功能"会产生一个不符合`routes/todos.py`模式的随机`/api/notes`端点、一个没有侧边栏导航的独立页面、以及零测试。设置完整的代理后，相同请求会产生遵循现有模式的路由、集成到侧边栏的页面、以及符合`test_todos.py`风格的测试。
 
-## The Journey Arc: Why This Order
+## 旅程弧线：为何是这个顺序
 
-The presentation follows a deliberate pedagogical sequence. Each section unlocks a new capability layer:
+演示文稿遵循精心设计的教学序列。每个部分解锁一个新的能力层：
 
-### Part 0: Introduction (Slides 1–4, no weight)
-**Purpose:** Set the stage. Introduce the TodoApp, define vibe coding, and show the destination.
-- Title slide establishes the journey metaphor
-- Example Project shows the transformation: before/after comparison of TodoApp — plain project structure vs one with full Claude Code configuration (.claude/, CLAUDE.md, .mcp.json, etc.)
-- "What is Vibe Coding?" creates the 0% baseline — the pain point
-- Journey Map provides a clickable TOC showing the full path ahead
+### Part 0: 介绍（幻灯片 1–4，无权重）
+**目的：** 设定场景。介绍TodoApp，定义vibe coding，展示目的地。
+- 标题幻灯片建立旅程隐喻
+- 示例项目展示转变：TodoApp之前/之后对比 — 纯项目结构 vs 完整Claude Code配置（.claude/、CLAUDE.md、.mcp.json等）
+- "什么是Vibe Coding？"创建0%基准线 — 痛点
+- 旅程图提供可点击的TOC，显示完整路径
 
-### Part 1: Prerequisites (Slides 5–9, no weight)
-**Purpose:** Get Claude Code installed and running. This is purely logistical — no engineering practices yet.
-- Installing, authentication, first session, interface overview
-- No weight because knowing how to install a tool doesn't improve code quality
-- The "first session" IS vibe coding — this is intentional, so the developer experiences the 0% state firsthand
+### Part 1: 前提条件（幻灯片 5–9，无权重）
+**目的：** 让Claude Code安装并运行。这是纯后勤性质的——还没有工程实践。
+- 安装、认证、首次会话、界面概览
+- 没有权重因为知道如何安装工具不会提高代码质量
+- "首次会话"就是vibe coding——这是故意的，让开发者亲身体验0%状态
 
-### Part 2: Better Prompting (Slides 10–17, Level: Low)
-**Purpose:** The first real improvement. Better inputs produce better outputs, even without any project configuration.
-- **Good vs Bad Prompts:** Specific, scoped prompts vs vague requests. The simplest possible improvement.
-- **Providing Context:** Using `@files` to give Claude the code it needs. Reduces hallucination immediately.
-- **Context Window & /compact:** Understanding the finite context window prevents degraded responses in long sessions.
-- **Plan Mode:** `/plan` forces thinking before coding. Prevents wasted effort on wrong approaches.
+### Part 2: 更好的提示（幻灯片 10–17，级别：Low）
+**目的：** 第一个真正的改进。更好的输入产生更好的输出，即使没有任何项目配置。
+- **好vs坏提示：** 具体的、作用域化的提示 vs 模糊的请求。最简单的改进。
+- **提供上下文：** 使用 `@files` 给予Claude所需的代码。立即减少幻觉。
+- **上下文窗口和 /compact：** 理解有限的上下文窗口可防止长会话中响应退化。
+- **计划模式：** `/plan` 强制在编码前思考。防止在错误方法上浪费精力。
 
-**Why Low level:** Prompting is foundational but limited. It improves individual interactions but doesn't create lasting project knowledge. Each session starts from zero.
+**为何是Low级别：** 提示是基础但有限。它改善了个别交互但不创建持久的项目知识。每个会话从头开始。
 
-### Part 3: Project Memory (Slides 18–24, Level: Medium)
-**Purpose:** The leap from session-level to project-level knowledge. Claude now remembers across sessions.
-- **CLAUDE.md & /init:** The project's "README for Claude." Establishes architecture, tech stack, and conventions. This is the single most impactful file.
-- **What to Include:** Practical guidance on writing effective CLAUDE.md content (keep under 150 lines, focus on what Claude needs to know).
-- **Rules:** Path-scoped conventions in `.claude/rules/`. Rules are a multiplier — they apply automatically to every matching file, enforcing consistency without developer effort. A single `backend-testing.md` rule ensures every test follows the same pattern forever.
+### Part 3: 项目记忆（幻灯片 18–24，级别：Medium）
+**目的：** 从会话级到项目知识的飞跃。Claude现在跨会话记忆。
+- **CLAUDE.md和 /init：** 项目的"给Claude的README"。建立架构、技术栈和约定。这是最有影响力的单个文件。
+- **包含什么：** 编写有效CLAUDE.md内容的实践指导（保持在150行以下，聚焦Claude需要知道的）。
+- **Rules：** `.claude/rules/` 中的路径作用域约定。Rules是乘数——它们自动应用于每个匹配的文件，无需开发者努力即可强制一致。单个 `backend-testing.md` 规则确保每个测试永远遵循相同模式。
 
-**Why Medium level:** Project memory transforms Claude from a stateless tool into a context-aware collaborator. But knowledge alone doesn't create workflows.
+**为何是Medium级别：** 项目记忆将Claude从无状态工具转变为感知上下文的协作者。但仅有知识不创建工作流。
 
-### Part 4: Structured Workflows (Slides 25–28, Level: Medium)
-**Purpose:** Systematic approaches that prevent wasted effort and improve execution quality.
-- **Task Lists:** Breaking complex work into trackable steps. Prevents scope drift and ensures completeness.
-- **Model Selection:** Choosing the right model (Opus for architecture, Sonnet for implementation, Haiku for quick tasks) optimizes cost and quality.
+### Part 4: 结构化工作流（幻灯片 25–28，级别：Medium）
+**目的：** 防止浪费精力和提高执行质量的系统方法。
+- **任务列表：** 将复杂工作分解为可跟踪的步骤。防止范围漂移并确保完整性。
+- **模型选择：** 选择正确的模型（Opus用于架构，Sonnet用于实现，Haiku用于快速任务）优化成本和质量。
 
-**Why still Medium level:** Workflows are important but relatively simple concepts. They build on Part 3's project memory and use it more systematically. The step up to High comes with domain knowledge.
+**为何仍是Medium级别：** 工作流是重要但相对简单的概念。它们建立在Part 3的项目记忆之上并更系统地使用它。升级到High来自领域知识。
 
-### Part 5: Domain Knowledge (Slides 29–33, Level: High)
-**Purpose:** Reusable, on-demand expertise. Skills are the bridge between static memory (CLAUDE.md/Rules) and dynamic agents.
-- **What Are Skills:** Skills as packaged domain knowledge that Claude loads when relevant. The concept of progressive disclosure.
-- **Creating Skills:** Hands-on: building a `frontend-conventions` skill for the TodoApp that teaches Tailwind tokens, component patterns, and sidebar integration.
-- **Skill Frontmatter & Invocation:** The technical details: YAML frontmatter, manual vs auto-discovery invocation, the `context: fork` option.
+### Part 5: 领域知识（幻灯片 29–33，级别：High）
+**目的：** 可复用的、按需的专业知识。Skills是静态记忆（CLAUDE.md/Rules）和动态代理之间的桥梁。
+- **什么是Skills：** 打包的领域知识，Claude在相关时加载。渐进式披露的概念。
+- **创建Skills：** 实践：为TodoApp构建一个 `frontend-conventions` skill，教授Tailwind代币、组件模式和侧边栏集成。
+- **Skill Frontmatter和调用：** 技术细节：YAML frontmatter、手动vs自动发现调用、`context: fork` 选项。
 
-**Why High level:** Skills are the first "multiplier" concept — one skill definition improves every future interaction in its domain. But skills are passive knowledge; they need agents to become active.
+**为何是High级别：** Skills是第一个"乘数"概念——一个skill定义改善其领域内每个未来交互。但Skills是被动知识；需要代理才能变得主动。
 
-### Part 6: Agentic Engineering (Slides 34–46, Level: High)
-**Purpose:** The destination covered in this presentation. Autonomous, specialized agents that coordinate to build features end-to-end.
-- **What Are Agents:** The concept of specialized subagents with constrained tools and preloaded skills.
-- **Frontend Engineer Agent:** A concrete agent that uses the TodoApp's frontend conventions, adds routes to sidebar, follows design tokens. Before/after comparison shows the transformation.
-- **Backend Engineer Agent:** Parallel agent for the backend — follows FastAPI route patterns, SQLAlchemy models, writes tests matching existing style.
-- **Commands & Orchestration:** The capstone pattern: Command → Agent → Skills. A single `/add-feature` command coordinates frontend + backend agents, each with their own skills, to deliver a complete feature. This is the architectural pinnacle.
-- **Hooks & MCP:** Lifecycle automation (pre-commit checks, sound notifications) and external tool integration. The final automation layer.
-- **Command → Agent → Skills:** The full architecture diagram. Shows how all pieces connect: commands invoke agents, agents load skills, skills provide knowledge. This is the "High level" understanding slide.
+### Part 6: 代理工程（幻灯片 34–46，级别：High）
+**目的：** 本演示涵盖的目的地。自主、专业化的代理，协调端到端构建功能。
+- **什么是Agents：** 具有约束工具和预加载技能的专业化子代理的概念。
+- **前端工程师代理：** 具体代理，使用TodoApp的前端约定、添加到侧边栏、遵循设计代币。之前/之后对比展示转变。
+- **后端工程师代理：** 并行代理用于后端——遵循FastAPI路由模式、SQLAlchemy模型、编写符合现有风格的测试。
+- **命令和编排：**  capstone模式：Command → Agent → Skills。单个 `/add-feature` 命令协调前端+后端代理，每个有自己技能，交付完整功能。这是架构巅峰。
+- **Hooks和MCP：** 生命周期自动化（pre-commit检查、声音通知）和外部工具集成。最终的自动化层。
+- **Command → Agent → Skills：** 完整架构图。展示所有部分如何连接：命令调用代理，代理加载技能，技能提供知识。这是"高级"理解幻灯片。
 
-**Why High level:** This section covers the highest-value practices taught in this presentation. Everything before it was building toward this. Orchestration and agentic workflows represent the ceiling of what this course covers — full Pro (multi-agent teams, advanced orchestration patterns) is beyond this presentation's scope.
+**为何是High级别：** 本节涵盖本演示教授的最高价值实践。之前的一切都为此构建。编排和代理工作流代表本课程涵盖的天花板——完整的Pro（多代理团队、高级编排模式）超出本演示范围。
 
-### The High Level Slide (Slide 44)
-The celebration moment. Shows the complete TodoApp configuration:
-- CLAUDE.md for project context
-- Rules for path-scoped conventions
-- Skills for domain knowledge
-- Agents for consistent execution
-- Commands for orchestrated workflows
-- Hooks for lifecycle automation
-- MCP servers for external tools
+### 高级幻灯片（幻灯片44）
+庆祝时刻。展示完整TodoApp配置：
+- CLAUDE.md用于项目上下文
+- Rules用于路径作用域约定
+- Skills用于领域知识
+- Agents用于一致执行
+- Commands用于编排工作流
+- Hooks用于生命周期自动化
+- MCP服务器用于外部工具
 
-### Appendix (Slides 47+, no weight)
-**Purpose:** Reference material. Every command, setting, and configuration option. No weight because these are reference lookups, not journey milestones. Includes: tool usage, all slash commands, commit/PR workflows, customization options, debugging tips, and golden rules.
+### 附录（幻灯片 47+，无权重）
+**目的：** 参考材料。每个命令、设置和配置选项。无权重因为这些是参考查找，不是旅程里程碑。包括：工具使用、所有斜杠命令、commit/PR工作流、自定义选项、调试技巧和黄金法则。
 
-## How to Use This Framework When Editing Slides
+## 编辑幻灯片时如何使用此框架
 
-When creating or modifying slides, consider:
+创建或修改幻灯片时，考虑：
 
-1. **Where does this concept sit on the journey?** A slide about "better error messages in prompts" belongs in Part 2 (prompting, Low level). A slide about "agent memory scopes" belongs in Part 6 (agentic, High level).
+1. **这个概念在旅程中处于什么位置？** 关于"提示中更好错误信息"的幻灯片属于Part 2（提示，Low级别）。关于"代理记忆作用域"的幻灯片属于Part 6（代理，High级别）。
 
-2. **What's the before/after?** Every significant slide should implicitly or explicitly show the contrast: what happens at Low level (vibe coding) vs what happens with this technique. Use the TodoApp to make it concrete.
+2. **之前/之后是什么？** 每个重要幻灯片应隐式或显式展示对比：Low级别（vibe coding）发生什么 vs 使用此技术发生什么。使用TodoApp使其具体化。
 
-3. **Does the level assignment feel right?** Level transitions happen at Part section boundaries. Individual slides within a section inherit the section's level.
+3. **级别分配感觉正确吗？** 级别转换发生在Part部分边界。Part内的各个幻灯片继承该部分的级别。
 
-4. **Does it build on what came before?** Skills assume the developer already knows about CLAUDE.md and Rules. Agents assume they know about Skills. Commands assume they know about Agents. Never reference a concept before its section.
+4. **它建立在之前的基础上吗？** Skills假设开发者已经知道CLAUDE.md和Rules。Agents假设他们知道Skills。Commands假设他们知道Agents。永远不要在它的部分之前引用概念。
 
-5. **Use the TodoApp.** Abstract explanations lose the audience. Show the actual `routes/todos.py` code, the actual `Sidebar.tsx` component, the actual `CLAUDE.md` content. The running example is what makes the framework tangible.
+5. **使用TodoApp。** 抽象解释会失去观众。展示实际的 `routes/todos.py` 代码、实际的 `Sidebar.tsx` 组件、实际的 `CLAUDE.md` 内容。运行示例使框架有形。
 
-## Level Transition Reference Table
+## 级别转换参考表
 
-| Slide | Slide Name | data-level | Level Label |
+| 幻灯片 | 幻灯片名称 | data-level | 级别标签 |
 |-------|-----------|------------|-------------|
-| 10 | Better Prompting (section divider) | `data-level="low"` | Low |
-| 18 | Project Memory (section divider) | `data-level="medium"` | Medium |
-| 29 | Domain Knowledge (section divider) | `data-level="high"` | High |
-| 34 | Agentic Engineering (section divider) | `data-level="high"` | High |
+| 10 | Better Prompting（章节分隔符） | `data-level="low"` | Low |
+| 18 | Project Memory（章节分隔符） | `data-level="medium"` | Medium |
+| 29 | Domain Knowledge（章节分隔符） | `data-level="high"` | High |
+| 34 | Agentic Engineering（章节分隔符） | `data-level="high"` | High |
 
-All other slides inherit the level from the last `data-level` attribute set before them. Slides 1–9 (Intro + Prerequisites) have no level and keep the bar hidden until slide 2 shows "Low" (slides 2–9 are below the first level transition at slide 10, so the bar shows empty/zero until slide 10).
+所有其他幻灯片从之前设置的最后一个 `data-level` 属性继承级别。幻灯片1-9（介绍+前提条件）没有级别，在幻灯片2显示"Low"之前保持条隐藏（幻灯片2-9在第一个级别转换幻灯片10之前，所以条显示空/零直到幻灯片10）。
 
-**Note:** The main presentation (`presentation/index.html`) caps at **High** level — `data-level="pro"` is not used. The Pro tick mark remains visible on the journey bar as the theoretical ceiling, but the fill never reaches it. The video presentation (`1-video-workflow.html`) caps at **Medium** level.
+**注意：** 主演示文稿（`presentation/index.html`）最高到**High**级别——不使用 `data-level="pro"`。Pro标记在旅程条上保持可见作为理论天花板，但填充永远不会达到它。视频演示文稿（`1-video-workflow.html`）最高到**Medium**级别。

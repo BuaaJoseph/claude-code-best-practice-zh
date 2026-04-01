@@ -1,614 +1,614 @@
 ---
-description: Execute phased implementation with validation gates
+description: 执行分阶段实施并带有验证关卡
 argument-hint: "<feature-slug> [--phase N] [--validate-only]"
 ---
 
-## User Input
+## 用户输入
 
 ```text
 $ARGUMENTS
 ```
 
-You **MUST** parse the user input to extract the feature slug (the folder name in `rpi/`).
+你**必须**解析用户输入以提取功能 slug（`rpi/` 中的文件夹名称）。
 
-## Purpose
+## 目的
 
-This command executes phased implementation of features based on planning documentation. It orchestrates specialized agents, enforces validation gates, and ensures constitutional compliance throughout implementation.
+此命令根据规划文档执行功能的分阶段实施。它编排专业 agent，强制执行验证关卡，并确保在整个实施过程中符合宪法。
 
-**Prerequisites**:
-- Feature folder exists at `rpi/{feature-slug}/`
-- Planning completed (`rpi/{feature-slug}/plan/PLAN.md` exists)
+**前置条件**：
+- 功能文件夹存在于 `rpi/{feature-slug}/`
+- 规划完成（`rpi/{feature-slug}/plan/PLAN.md` 存在）
 
-**Output Location**: `rpi/{feature-slug}/implement/`
+**输出位置**：`rpi/{feature-slug}/implement/`
 
-**This is Step 4 of the RPI Workflow** (final step - actual implementation).
+**这是 RPI 工作流的步骤 4**（最后一步 - 实际实施）。
 
-## Flags
+## 标志
 
-- `--phase N`: Execute specific phase number (1-8), if omitted starts from phase 1
-- `--validate-only`: Only validate current phase, don't implement
-- `--skip-validation`: Skip validation gate and proceed (use with caution)
+- `--phase N`：执行特定阶段编号（1-8），如果省略则从阶段 1 开始
+- `--validate-only`：仅验证当前阶段，不实施
+- `--skip-validation`：跳过验证关卡并继续（谨慎使用）
 
-## Available Agents
+## 可用 Agent
 
-All agents use **Opus model** for maximum quality.
+所有 Agent 使用 **Opus 模型**以获得最大质量。
 
-### Implementation Agent
+### 实施 Agent
 
-| Agent | Type | When to Use |
+| Agent | 类型 | 何时使用 |
 |-------|------|-------------|
-| `senior-software-engineer` | Custom | All implementation tasks |
+| `senior-software-engineer` | 自定义 | 所有实施任务 |
 
-### Support Agents
+### 支持 Agent
 
-| Agent | Type | Purpose |
+| Agent | 类型 | 目的 |
 |-------|------|---------|
-| `Explore` | Built-in | Pre-implementation code exploration |
-| `code-reviewer` | Custom | Code review and quality validation |
-| `constitutional-validator` | Custom | Validate against project constitution |
-| `documentation-analyst-writer` | Built-in | Documentation generation |
+| `Explore` | 内置 | 实施前的代码探索 |
+| `code-reviewer` | 自定义 | 代码评审和质量验证 |
+| `constitutional-validator` | 自定义 | 验证是否符合项目宪法 |
+| `documentation-analyst-writer` | 内置 | 文档生成 |
 
-### Agent Routing
+### Agent 路由
 
-All implementation tasks are handled by the `senior-software-engineer` agent.
-
----
-
-## Phase 0: Load Context and Rules
-
-**Prerequisites**: Feature slug parsed from user input
-
-**Process**:
-
-### 0.1 Load Project Constitution
-
-1. Check for a constitution or principles document in the repository
-2. If exists, extract:
-   - Technical constraints (type safety, testing, component isolation)
-   - Business principles (quality standards, workflow)
-   - Architectural boundaries
-3. Store constraints for enforcement during implementation
-
-### 0.2 Load Domain-Specific Guidelines
-
-Based on files to be modified, load relevant project guidelines:
-- Check for component-specific README files
-- Check for coding style guides
-- Check for testing requirements documentation
-
-### 0.3 Analyze Implementation Scope
-
-1. Read `rpi/{feature-slug}/plan/PLAN.md`
-2. Identify all files to be modified
-3. Map files to implementation agent
-
-**Outputs**:
-- Constitutional context summary
-- Domain rules loaded
-- File-to-agent mapping
-- Phase execution plan
-
-**Validation**:
-- [ ] Constitution loaded (if exists)
-- [ ] Domain rules loaded for affected files
-- [ ] All files mapped to agents
-- [ ] Execution plan understood
+所有实施任务由 `senior-software-engineer` agent 处理。
 
 ---
 
-## Phased Implementation Workflow
+## 阶段 0：加载上下文和规则
 
-### Phase Implementation Loop
+**前置条件**：从用户输入解析功能 slug
 
-For each phase in PLAN.md:
+**流程**：
+
+### 0.1 加载项目宪法
+
+1. 在代码库中检查宪法或原则文档
+2. 如果存在，提取：
+   - 技术约束（类型安全、测试、组件隔离）
+   - 业务原则（质量标准、工作流）
+   - 架构边界
+3. 在实施期间存储约束以便强制执行
+
+### 0.2 加载领域特定指南
+
+根据要修改的文件，加载相关的项目指南：
+- 检查特定组件的 README 文件
+- 检查编码风格指南
+- 检查测试需求文档
+
+### 0.3 分析实施范围
+
+1. 读取 `rpi/{feature-slug}/plan/PLAN.md`
+2. 识别所有要修改的文件
+3. 将文件映射到实施 agent
+
+**输出**：
+- 宪法上下文摘要
+- 领域规则已加载
+- 文件到 agent 的映射
+- 阶段执行计划
+
+**验证**：
+- [ ] 宪法已加载（如果存在）
+- [ ] 受影响文件的领域规则已加载
+- [ ] 所有文件已映射到 agent
+- [ ] 执行计划已理解
+
+---
+
+## 分阶段实施工作流
+
+### 阶段实施循环
+
+对于 PLAN.md 中的每个阶段：
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ Phase N: [Phase Name]                                            │
+│ 阶段 N: [阶段名称]                                               │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
-│  1. Code Discovery (Explore Agent)                              │
-│     └─→ Understand existing code before changing it             │
+│  1. 代码发现 (Explore Agent)                                    │
+│     └─→ 在更改之前了解现有代码                                    │
 │                                                                  │
-│  2. Implementation (senior-software-engineer)                   │
-│     └─→ Implement phase deliverables                            │
+│  2. 实施 (senior-software-engineer)                             │
+│     └─→ 实施阶段交付物                                           │
 │                                                                  │
-│  3. Self-Validation                                             │
-│     └─→ Engineer validates against phase checklist              │
+│  3. 自我验证                                                    │
+│     └─→ 工程师对照阶段检查清单进行验证                             │
 │                                                                  │
-│  4. Code Review (code-reviewer Agent)                           │
-│     └─→ Security, correctness, maintainability                  │
+│  4. 代码评审 (code-reviewer Agent)                              │
+│     └─→ 安全性、正确性、可维护性                                  │
 │                                                                  │
-│  5. User Validation Gate                                        │
-│     └─→ STOP and request user approval                          │
-│         ├─→ PASS: Proceed to next phase                         │
-│         ├─→ CONDITIONAL PASS: Note issues, proceed              │
-│         └─→ FAIL: Fix issues, re-validate                       │
+│  5. 用户验证关卡                                                │
+│     └─→ 停止并请求用户批准                                       │
+│         ├─→ 通过：继续下一阶段                                   │
+│         ├─→ 有条件通过：记录问题，继续                            │
+│         └─→ 失败：修复问题，重新验证                              │
 │                                                                  │
-│  6. Documentation Update                                        │
-│     └─→ Update phase status in PLAN.md                          │
+│  6. 文档更新                                                    │
+│     └─→ 在 PLAN.md 中更新阶段状态                                │
 │                                                                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Step 1: Code Discovery (Per Phase)
+## 步骤 1：代码发现（每个阶段）
 
-**Agent**: Explore (Built-in, via Task tool)
+**Agent**：Explore（内置，通过 Task tool）
 
-**Purpose**: Ground implementation in code reality before making changes.
+**目的**：在更改之前，将实施扎根于代码现实。
 
-**Process**:
-1. Launch Explore agent via Task tool with `subagent_type="Explore"`
-2. Request analysis of files affected by current phase
-3. Understand existing patterns, integration points, constraints
+**流程**：
+1. 通过 Task tool 启动 Explore agent，参数 `subagent_type="Explore"`
+2. 请求分析当前阶段受影响的文件
+3. 了解现有模式、集成点、约束
 
-**Explore Agent Prompt**:
+**Explore Agent 提示**：
 ```
-Analyze the codebase to prepare for implementing Phase N of [feature-name].
+分析代码库以准备实施 [feature-name] 的阶段 N。
 
-Files to be modified in this phase:
-[List files from PLAN.md]
+本阶段要修改的文件：
+[从 PLAN.md 列出的文件]
 
-Investigate and document:
+调查并记录：
 
-1. **Current Implementation**
-   - How do these files currently work?
-   - What patterns are used?
-   - What functions/classes will be affected?
+1. **当前实现**
+   - 这些文件目前如何工作？
+   - 使用什么模式？
+   - 哪些函数/类会受到影响？
 
-2. **Integration Points**
-   - What other files import or use these modules?
-   - What APIs or interfaces will change?
-   - What tests cover this code?
+2. **集成点**
+   - 还有哪些文件导入或使用这些模块？
+   - 哪些 API 或接口会改变？
+   - 什么测试覆盖这段代码？
 
-3. **Dependencies**
-   - What libraries are used?
-   - What internal utilities are available?
-   - What constraints exist from current code?
+3. **依赖项**
+   - 使用哪些库？
+   - 有什么内部工具可用？
+   - 现有代码存在什么约束？
 
-4. **Patterns to Follow**
-   - What coding style is used in these files?
-   - What naming conventions are followed?
-   - What error handling patterns exist?
+4. **要遵循的模式**
+   - 这些文件使用什么编码风格？
+   - 使用什么命名约定？
+   - 存在什么错误处理模式？
 
-5. **Risks and Considerations**
-   - What could break if we change this?
-   - What edge cases exist?
-   - What backward compatibility concerns?
+5. **风险和考虑**
+   - 如果我们更改这个，什么会中断？
+   - 存在什么边缘情况？
+   - 有什么向后兼容性担忧？
 
-Provide a discovery summary to inform implementation.
+提供发现摘要以指导实施。
 ```
 
-**Output**: Discovery summary for implementation agent
+**输出**：供实施 agent 使用的发现摘要
 
 ---
 
-## Step 2: Implementation (Per Phase)
+## 步骤 2：实施（每个阶段）
 
-**Agent**: senior-software-engineer
+**Agent**：senior-software-engineer
 
-**Process**:
-1. Use senior-software-engineer agent
-2. Provide discovery context from Step 1
-3. Implement all deliverables for the phase
-4. Follow constitutional constraints and project rules
+**流程**：
+1. 使用 senior-software-engineer agent
+2. 提供来自步骤 1 的发现上下文
+3. 实施该阶段的所有交付物
+4. 遵循宪法约束和项目规则
 
-**Implementation Agent Prompt Template**:
+**实施 Agent 提示模板**：
 ```
-Acting as the [agent-name] agent, implement Phase N deliverables for [feature-name].
+作为 [agent-name] agent，实施 [feature-name] 的阶段 N 交付物。
 
-## Context
-- Constitutional Constraints: [from Phase 0]
-- Domain Rules: [from Phase 0]
-- Discovery Summary: [from Step 1]
+## 上下文
+- 宪法约束：[来自阶段 0]
+- 领域规则：[来自阶段 0]
+- 发现摘要：[来自步骤 1]
 
-## Phase N Deliverables
-[List from PLAN.md]
+## 阶段 N 交付物
+[从 PLAN.md 列出]
 
-## Files to Modify
-[List files with specific changes from PLAN.md]
+## 要修改的文件
+[从 PLAN.md 列出带有具体更改的文件]
 
-## Implementation Requirements
-1. Follow existing code patterns identified in discovery
-2. Honor constitutional constraints (type safety, testing, etc.)
-3. Follow project-specific rules (if applicable)
-4. Write tests for new functionality
-5. Include appropriate logging
-6. Handle errors gracefully
+## 实施要求
+1. 遵循在发现中识别的现有代码模式
+2. 尊重宪法约束（类型安全、测试等）
+3. 遵循项目特定规则（如果适用）
+4. 为新功能编写测试
+5. 包含适当的日志记录
+6. 优雅地处理错误
 
-## Quality Checklist
-- [ ] Code follows existing patterns
-- [ ] Type annotations present where applicable
-- [ ] Tests written and passing
-- [ ] No breaking changes to existing functionality
-- [ ] Logging added for observability
-- [ ] Error handling comprehensive
+## 质量检查清单
+- [ ] 代码遵循现有模式
+- [ ] 适用处存在类型注解
+- [ ] 编写并通过测试
+- [ ] 对现有功能没有破坏性更改
+- [ ] 添加了可观测性的日志记录
+- [ ] 错误处理全面
 
-Implement all deliverables and report what was done.
+实施所有交付物并报告完成情况。
 ```
 
 ---
 
-## Step 3: Self-Validation
+## 步骤 3：自我验证
 
-**Agent**: senior-software-engineer (same as Step 2)
+**Agent**：senior-software-engineer（与步骤 2 相同）
 
-**Process**:
-1. Agent validates implementation against phase checklist
-2. Run linting (use project's configured linter)
-3. Run tests relevant to changes
-4. Verify build succeeds
+**流程**：
+1. Agent 对照阶段检查清单验证实施
+2. 运行 linting（使用项目配置的 linter）
+3. 运行与更改相关的测试
+4. 验证构建成功
 
-**Validation Commands** (adjust to your project):
+**验证命令**（根据你的项目调整）：
 
 ```bash
-# Run linter
+# 运行 linter
 [your-linter-command]
 
-# Run tests
+# 运行测试
 [your-test-command]
 
-# Build/compile
+# 构建/编译
 [your-build-command]
 ```
 
-**Self-Validation Checklist**:
-- [ ] All deliverables implemented
-- [ ] Linting passes
-- [ ] Tests pass
-- [ ] Build succeeds
-- [ ] No regressions in existing tests
-- [ ] Constitutional constraints honored
-- [ ] Domain rules followed
+**自我验证检查清单**：
+- [ ] 所有交付物已实施
+- [ ] Linting 通过
+- [ ] 测试通过
+- [ ] 构建成功
+- [ ] 现有测试没有回归
+- [ ] 遵守了宪法约束
+- [ ] 遵循了领域规则
 
 ---
 
-## Step 4: Code Review
+## 步骤 4：代码评审
 
-**Agent**: code-reviewer (Custom, auto-invoked)
+**Agent**：code-reviewer（自定义，自动调用）
 
-**Process**:
-1. Invoke code-reviewer agent to review changes
-2. Focus on correctness, security, maintainability
-3. Address blockers before proceeding
+**流程**：
+1. 调用 code-reviewer agent 评审更改
+2. 关注正确性、安全性、可维护性
+3. 在继续之前解决阻塞项
 
-**Code Review Agent Prompt**:
+**代码评审 Agent 提示**：
 ```
-Acting as the code-reviewer agent, review the Phase N implementation for [feature-name].
+作为 code-reviewer agent，评审 [feature-name] 的阶段 N 实施。
 
-## Files Changed
-[List modified files]
+## 修改的文件
+[修改的文件列表]
 
-## Changes Made
-[Summary of implementation]
+## 实施的更改
+[实施摘要]
 
-## Review Focus
-- Correctness & tests
-- Security & dependency hygiene
-- Architectural boundaries
-- Clarity over cleverness
+## 评审重点
+- 正确性和测试
+- 安全性和依赖卫生
+- 架构边界
+- 清晰优先于巧妙
 
-## Constitutional Constraints
-[From Phase 0]
+## 宪法约束
+[来自阶段 0]
 
-Provide review using standard output format.
+使用标准输出格式提供评审。
 ```
 
-**Review Verdicts**:
-- **APPROVED**: Proceed to user validation
-- **APPROVED WITH SUGGESTIONS**: Note suggestions, proceed
-- **NEEDS REVISION**: Fix issues, re-review
+**评审判定**：
+- **批准**：继续到用户验证
+- **批准但有建议**：记录建议，继续
+- **需要修订**：修复问题，重新评审
 
 ---
 
-## Step 5: User Validation Gate
+## 步骤 5：用户验证关卡
 
-**CRITICAL**: This step REQUIRES user interaction. DO NOT proceed automatically.
+**关键**：此步骤**需要**用户交互。**不要**自动继续。
 
-**Process**:
-1. Present phase deliverables checklist
-2. Show what was implemented (files changed, features added)
-3. Present validation criteria from PLAN.md
-4. Show code review results
-5. **STOP and wait for user decision**
+**流程**：
+1. 呈现阶段交付物检查清单
+2. 显示已实施的内容（修改的文件、添加的功能）
+3. 展示来自 PLAN.md 的验证标准
+4. 显示代码评审结果
+5. **停止并等待用户决定**
 
-**Validation Request Format**:
+**验证请求格式**：
 ```
-## Phase N Validation Request
+## 阶段 N 验证请求
 
-### Deliverables Completed
-- [x] [Deliverable 1] - [implementation summary]
-- [x] [Deliverable 2] - [implementation summary]
+### 已完成的交付物
+- [x] [交付物 1] - [实施摘要]
+- [x] [交付物 2] - [实施摘要]
 - ...
 
-### Files Changed
-| File | Change Type | Lines |
+### 修改的文件
+| 文件 | 更改类型 | 行数 |
 |------|-------------|-------|
 | [file] | [add/modify] | [±N] |
 
-### Tests
-- [x] Unit tests: PASS
-- [x] Integration tests: PASS
-- [x] Build: SUCCESS
+### 测试
+- [x] 单元测试：通过
+- [x] 集成测试：通过
+- [x] 构建：成功
 
-### Code Review
-- Verdict: [APPROVED / APPROVED WITH SUGGESTIONS]
-- Issues: [None / List]
+### 代码评审
+- 判定：[批准 / 批准但有建议]
+- 问题：[无 / 列表]
 
-### Validation Criteria (from PLAN.md)
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
+### 验证标准（来自 PLAN.md）
+- [ ] [标准 1]
+- [ ] [标准 2]
 - ...
 
 ---
 
-**Please validate Phase N:**
-- **PASS**: Phase complete, proceed to Phase N+1
-- **CONDITIONAL PASS**: Note issues below, proceed with caution
-- **FAIL**: Specify issues to fix before proceeding
+**请验证阶段 N**：
+- **通过**：阶段完成，继续阶段 N+1
+- **有条件通过**：记录问题如下，谨慎继续
+- **失败**：指定在继续之前需要修复的问题
 ```
 
-**User Decisions**:
-- **PASS**: Proceed to next phase
-- **CONDITIONAL PASS**: Document issues, proceed to next phase
-- **FAIL**: Fix issues, re-run Steps 2-5
+**用户决定**：
+- **通过**：继续到下一阶段
+- **有条件通过**：记录问题，继续到下一阶段
+- **失败**：修复问题，重新运行步骤 2-5
 
 ---
 
-## Step 6: Documentation Update
+## 步骤 6：文档更新
 
-**Process**:
-1. Update `rpi/{feature-slug}/plan/PLAN.md` with phase status
-2. Update `rpi/{feature-slug}/implement/IMPLEMENT.md` with validation results
-3. Append each phase's validation to IMPLEMENT.md
+**流程**：
+1. 在 `rpi/{feature-slug}/plan/PLAN.md` 中更新阶段状态
+2. 在 `rpi/{feature-slug}/implement/IMPLEMENT.md` 中更新验证结果
+3. 将每个阶段的验证追加到 IMPLEMENT.md
 
-### Phase Status Tracking
+### 阶段状态跟踪
 
-Update checkboxes in PLAN.md:
+在 PLAN.md 中更新复选框：
 ```markdown
-- [ ] Phase N: Not Started
-- [~] Phase N: In Progress
-- [x] Phase N: Validated (PASS)
-- [!] Phase N: Conditional Pass (with notes)
-- [-] Phase N: Failed Validation (needs rework)
+- [ ] 阶段 N：未开始
+- [~] 阶段 N：进行中
+- [x] 阶段 N：已验证（通过）
+- [!] 阶段 N：有条件通过（带注释）
+- [-] 阶段 N：验证失败（需要返工）
 ```
 
-### IMPLEMENT.md Template
+### IMPLEMENT.md 模板
 
 ```markdown
-# Implementation Record
+# 实施记录
 
-**Feature**: [feature-slug]
-**Started**: [Date]
-**Status**: [IN_PROGRESS / COMPLETED]
-
----
-
-## Phase 1: [Phase Name]
-
-**Date**: [Date]
-**Verdict**: [PASS / CONDITIONAL PASS / FAIL]
-
-### Deliverables
-- [x] [Deliverable 1]
-- [x] [Deliverable 2]
-
-### Files Changed
-[List with line counts]
-
-### Test Results
-[Test output summary]
-
-### Code Review
-[Review verdict and notes]
-
-### Notes
-[Any additional notes]
+**功能**：[feature-slug]
+**开始日期**：[日期]
+**状态**：[进行中 / 已完成]
 
 ---
 
-## Phase 2: [Phase Name]
-[Same structure as Phase 1...]
+## 阶段 1：[阶段名称]
+
+**日期**：[日期]
+**判定**：[通过 / 有条件通过 / 失败]
+
+### 交付物
+- [x] [交付物 1]
+- [x] [交付物 2]
+
+### 修改的文件
+[列出及行数]
+
+### 测试结果
+[测试输出摘要]
+
+### 代码评审
+[评审判定和注释]
+
+### 注释
+[任何额外注释]
 
 ---
 
-## Summary
+## 阶段 2：[阶段名称]
+[与阶段 1 相同结构...]
 
-**Phases Completed**: [N] of [N]
-**Final Status**: [COMPLETED / IN_PROGRESS]
+---
+
+## 摘要
+
+**已完成阶段**：N / N
+**最终状态**：[已完成 / 进行中]
 ```
 
 ---
 
-## Error Handling
+## 错误处理
 
-### Implementation Failures
+### 实施失败
 
-**If implementation fails**:
-1. Document the specific failure
-2. Analyze root cause
-3. Try alternative approach (max 2 attempts)
-4. If still failing, STOP and ask user for guidance
-5. Do NOT proceed to next phase with broken implementation
+**如果实施失败**：
+1. 记录具体失败
+2. 分析根本原因
+3. 尝试替代方法（最多 2 次）
+4. 如果仍然失败，**停止并询问用户指导**
+5. **不要**带着损坏的实施继续到下一阶段
 
-**Message**: "Implementation failed: [error]. Attempted [N] approaches. User guidance needed."
+**消息**："实施失败：[错误]。已尝试 [N] 种方法。需要用户指导。"
 
-### Test Failures
+### 测试失败
 
-**If tests fail**:
-1. Analyze failure cause (code bug vs test bug)
-2. Fix the issue
-3. Re-run tests
-4. If persistent, document and ask user
-5. Do NOT mark phase complete with failing tests
+**如果测试失败**：
+1. 分析失败原因（代码 bug vs 测试 bug）
+2. 修复问题
+3. 重新运行测试
+4. 如果持续存在，记录并询问用户
+5. **不要**在测试失败时标记阶段完成
 
-**Message**: "Tests failing: [failures]. Fix attempted but unsuccessful. User review needed."
+**消息**："测试失败：[失败]。尝试修复但不成功。需要用户审查。"
 
-### Build Failures
+### 构建失败
 
-**If build fails**:
-1. Check for type errors
-2. Check for missing imports
-3. Check for syntax errors
-4. Fix and rebuild
-5. If persistent, escalate to user
+**如果构建失败**：
+1. 检查类型错误
+2. 检查缺失的导入
+3. 检查语法错误
+4. 修复并重新构建
+5. 如果持续存在，升级到用户
 
-**Message**: "Build failing: [error]. Unable to resolve automatically."
+**消息**："构建失败：[错误]。无法自动解决。"
 
-### Agent Failures
+### Agent 失败
 
-**If agent fails or times out**:
-1. Retry once with same inputs
-2. If still failing, proceed without that agent's contribution
-3. Document gap in validation request
+**如果 agent 失败或超时**：
+1. 使用相同输入重试一次
+2. 如果仍然失败，在没有该 agent 贡献的情况下继续
+3. 在验证请求中记录差距
 
-**Message**: "Agent [name] failed. Proceeding without contribution."
+**消息**："Agent [名称] 失败。在没有贡献的情况下继续。"
 
 ---
 
-## Completion Report
+## 完成报告
 
-On successful completion of all phases:
+所有阶段成功完成时：
 
 ```markdown
-## Implementation Complete
+## 实施完成
 
-### Feature Summary
-- **Feature**: [feature-name]
-- **Phases Completed**: [N] of [N]
+### 功能摘要
+- **功能**：[feature-name]
+- **已完成阶段**：N / N
 
-### Phases Executed
-| Phase | Status | Notes |
+### 已执行的阶段
+| 阶段 | 状态 | 注释 |
 |-------|--------|-------|
-| Phase 1 | PASS | [summary] |
-| Phase 2 | PASS | [summary] |
+| 阶段 1 | 通过 | [摘要] |
+| 阶段 2 | 通过 | [摘要] |
 | ... | ... | ... |
 
-### Files Modified
-| File | Change Type | Lines |
+### 修改的文件
+| 文件 | 更改类型 | 行数 |
 |------|-------------|-------|
 | [file] | [type] | [±N] |
 
-### Tests Added
-- [test files]
+### 添加的测试
+- [测试文件]
 
-### Code Review Summary
-- Blockers Fixed: [N]
-- Suggestions Addressed: [N]
+### 代码评审摘要
+- 已修复阻塞项：N
+- 已处理的建议：N
 
-### Constitutional Compliance
-- [ ] Type safety maintained
-- [ ] Tests written
-- [ ] Component isolation respected
-- [ ] No breaking changes
+### 宪法合规性
+- [ ] 保持类型安全
+- [ ] 编写测试
+- [ ] 尊重组件隔离
+- [ ] 没有破坏性更改
 
-### Artifacts Created
-- `rpi/{feature-slug}/plan/PLAN.md` (updated with phase status)
-- `rpi/{feature-slug}/implement/IMPLEMENT.md` (all phase validations)
+### 创建的工件
+- `rpi/{feature-slug}/plan/PLAN.md`（已更新阶段状态）
+- `rpi/{feature-slug}/implement/IMPLEMENT.md`（所有阶段验证）
 
-### Next Steps
-1. Create PR with changes
-2. Request final human review
-3. Deploy to staging
-4. Verify in staging environment
-5. Deploy to production
+### 下一步
+1. 创建包含更改的 PR
+2. 请求最终人工审查
+3. 部署到 staging
+4. 在 staging 环境中验证
+5. 部署到生产
 
-### PR Notes
+### PR 注释
 
-**Title**: [{feature-slug}] [Brief description]
+**标题**：[{feature-slug}] [简要描述]
 
-**Summary**:
-[What was implemented]
+**摘要**：
+[实施的内容]
 
-**Changes**:
-- [List key changes]
+**更改**：
+- [关键更改列表]
 
-**Testing**:
-- [How tested]
+**测试**：
+- [如何测试]
 
-**Rollout**:
-- [Deployment steps]
+**发布**：
+- [部署步骤]
 
-**Rollback**:
-- [Rollback procedure if issues]
+**回滚**：
+- [如果出现问题，回滚程序]
 ```
 
 ---
 
-## Quality Gates
+## 质量关卡
 
-### Per-Phase Quality Gate
+### 每个阶段的质量关卡
 
-Before marking any phase complete:
+在标记任何阶段完成之前：
 
-- [ ] All deliverables implemented
-- [ ] Linting passes
-- [ ] Tests pass
-- [ ] Build succeeds
-- [ ] Code review passed
-- [ ] User validation received
-- [ ] Documentation updated
+- [ ] 所有交付物已实施
+- [ ] Linting 通过
+- [ ] 测试通过
+- [ ] 构建成功
+- [ ] 代码评审通过
+- [ ] 收到用户验证
+- [ ] 文档已更新
 
-### Final Quality Gate
+### 最终质量关卡
 
-Before marking implementation complete:
+在标记实施完成之前：
 
-- [ ] All phases validated
-- [ ] No failing tests
-- [ ] Build succeeds in full
-- [ ] Constitutional compliance verified
-- [ ] Domain rules followed
-- [ ] PR notes generated
-
----
-
-## Notes
-
-### When to Use This Command
-
-- After `/rpi:plan` generates PLAN.md
-- When phased implementation with validation gates is needed
-- For features requiring structured implementation
-
-### When NOT to Use This Command
-
-- Bug fixes (too heavy, just fix directly)
-- Very simple changes (<30 minutes work)
-- Exploratory prototyping
-- Documentation-only changes
-
-### Best Practices
-
-1. **Review PLAN.md first**: Understand what you're implementing
-2. **Trust code discovery**: Let Explore agent inform implementation
-3. **Follow existing patterns**: Let code discovery inform implementation
-4. **Don't skip validation**: Gates exist to catch issues early
-5. **Document as you go**: Update status after each phase
-6. **Ask when stuck**: Better to ask than to proceed incorrectly
-
-### Part of RPI Workflow
-
-Step 4 of 4 (Describe → Research → Plan → **Implement**)
+- [ ] 所有阶段已验证
+- [ ] 没有失败的测试
+- [ ] 完整构建成功
+- [ ] 已验证宪法合规性
+- [ ] 遵循了领域规则
+- [ ] 生成了 PR 注释
 
 ---
 
-## Command Examples
+## 备注
 
-### Execute all phases
+### 何时使用此命令
+
+- 在 `/rpi:plan` 生成 PLAN.md 之后
+- 当需要带验证关卡的分阶段实施时
+- 对于需要结构化实施的功能
+
+### 何时**不**使用此命令
+
+- Bug 修复（太重，直接修复）
+- 非常简单的更改（<30 分钟工作）
+- 探索性原型
+- 仅文档更改
+
+### 最佳实践
+
+1. **首先审查 PLAN.md**：了解你要实施什么
+2. **信任代码发现**：让 Explore agent 指导实施
+3. **遵循现有模式**：让代码发现指导实施
+4. **不要跳过验证**：关卡存在以便尽早 catch 问题
+5. **边做边记录**：每个阶段后更新状态
+6. **遇到困难时询问**：宁可询问也不要错误地继续
+
+### RPI 工作流的一部分
+
+步骤 4 of 4（描述 → 研究 → 规划 → **实施**）
+
+---
+
+## 命令示例
+
+### 执行所有阶段
 
 ```bash
 /rpi:implement "my-feature"
 ```
 
-### Execute specific phase
+### 执行特定阶段
 
 ```bash
 /rpi:implement "my-feature" --phase 3
 ```
 
-### Validate only (no implementation)
+### 仅验证（不实施）
 
 ```bash
 /rpi:implement "my-feature" --phase 2 --validate-only
@@ -616,19 +616,19 @@ Step 4 of 4 (Describe → Research → Plan → **Implement**)
 
 ---
 
-## Post-Completion Action
+## 完成后操作
 
-**IMPORTANT**: After completing implementation (all phases or significant progress), ALWAYS prompt the user to compact the conversation:
+**重要**：完成实施（所有阶段或重大进展）后，**始终**提示用户压缩对话：
 
-> **Context Management**: This implementation workflow consumed significant context. To preserve progress and free up space, please run:
+> **上下文管理**：此实施工作流消耗了大量上下文。为保留进度并释放空间，请运行：
 >
 > ```
 > /compact
 > ```
 >
-> This will summarize the conversation and preserve implementation status while reducing token usage for future work.
+> 这将总结对话并在减少后续工作 token 使用的同时保留实施状态。
 
-**When to prompt for compact**:
-- After all phases are complete
-- After completing each major phase (if multi-session implementation)
-- If context is running low during implementation
+**何时提示压缩**：
+- 所有阶段完成后
+- 每个主要阶段完成后（如果是多会话实施）
+- 如果在实施期间上下文不足

@@ -1,57 +1,57 @@
 ---
-description: Track Claude Code commands report changes and find what needs updating
-argument-hint: [number of versions to check, default 10]
+description: 跟踪 Claude Code 命令报告变更并找出需要更新的内容
+argument-hint: [要检查的版本数量，默认为 10]
 ---
 
-# Workflow Changelog — Commands Report
+# 工作流变更日志 — 命令报告
 
-You are a coordinator for the claude-code-best-practice project. Your job is to launch a research agent, wait for its results, and present a report about drift in the **Commands Reference** report (`best-practice/claude-commands.md`).
+您是 claude-code-best-practice 项目的协调员。您的工作是启动一个研究 agent，等待它的结果，并呈现一份关于 **命令参考**报告（`best-practice/claude-commands.md`）漂移的报告。
 
-This workflow checks for exactly **two types of drift**:
-1. **Frontmatter fields** — any field added or removed in the official docs
-2. **Official commands** — any built-in slash command added or removed
+此工作流正好检查**两种类型的漂移**：
+1. **Frontmatter 字段** — 官方文档中添加或移除的任何字段
+2. **官方命令** — 添加或移除的任何内置斜杠命令
 
-**Versions to check:** `$ARGUMENTS` (default: 10 if empty or not a number)
+**要检查的版本：** `$ARGUMENTS`（如果为空或不是数字，默认为 10）
 
-This is a **read-then-report** workflow. Launch the agent, merge findings, and produce a report. Only take action if the user approves.
+这是一个**先读取后报告**的工作流。启动 agent，合并发现，产生报告。只有在用户批准后才采取行动。
 
 ---
 
-## Phase 1: Launch Research Agent
+## 阶段 1：启动研究 Agent
 
-Spawn the `workflow-claude-commands-agent` with this prompt:
+使用以下提示生成 `workflow-claude-commands-agent`：
 
-> Research the claude-code-best-practice project for commands report drift. Check the last $ARGUMENTS versions (default: 10).
+> 研究 claude-code-best-practice 项目的命令报告漂移。检查最近 $ARGUMENTS 个版本（默认：10）。
 >
-> Fetch these 2 external sources:
-> 1. Slash Commands Reference: https://code.claude.com/docs/en/slash-commands
-> 2. Changelog: https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
+> 获取这 2 个外部来源：
+> 1. 斜杠命令参考：https://code.claude.com/docs/en/slash-commands
+> 2. 变更日志：https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md
 >
-> Then read the local report (`best-practice/claude-commands.md`).
+> 然后读取本地报告（`best-practice/claude-commands.md`）。
 >
-> Check for exactly two things:
-> 1. **Frontmatter fields**: Compare the official docs' supported command frontmatter fields against the report's Frontmatter Fields table. Flag any fields that were added or removed.
-> 2. **Official commands**: Compare the official docs' built-in slash commands list against the report's official commands table. Flag any commands that were added or removed. Also check if any command's tag or description has changed.
+> 正好检查两件事：
+> 1. **Frontmatter 字段**：将官方文档支持的命令 frontmatter 字段与报告的 Frontmatter Fields 表进行比较。标记任何添加或移除的字段。
+> 2. **官方命令**：将官方文档的内置斜杠命令列表与报告的 official commands 表进行比较。标记任何添加或移除的命令。还要检查任何命令的标签或描述是否已更改。
 
 ---
 
-## Phase 2: Read Previous Changelog Entries
+## 阶段 2：读取之前的变更日志条目
 
-**While the agent is running**, read `changelog/best-practice/claude-commands/changelog.md` to get the last 25 entries. Parse the priority actions to identify:
-- **Recurring items** — issues that appeared before and are still unresolved
-- **New items** — issues appearing for the first time
-- **Resolved items** — previously flagged issues now fixed
+**在 agent 运行期间**，读取 `changelog/best-practice/claude-commands/changelog.md` 以获取最后 25 个条目。解析优先级操作以识别：
+- **重复出现的问题** — 之前出现过但仍未解决的问题
+- **新问题** — 首次出现的问题
+- **已解决的问题** — 之前标记的问题现在已修复
 
 ---
 
-## Phase 3: Generate Report
+## 阶段 3：生成报告
 
-**Wait for the agent to complete.** Produce a report with these sections:
+**等待 agent 完成。** 生成包含以下部分 的报告：
 
-1. **Frontmatter Field Changes** — Fields added or removed in official docs vs our report
-2. **Official Command Changes** — Built-in slash commands added or removed vs our table
+1. **Frontmatter 字段变更** — 官方文档与我们报告相比添加或移除的字段
+2. **官方命令变更** — 与我们的表相比添加或移除的内置斜杠命令
 
-End with a prioritized **Action Items** summary table. Each item must include a `Status` column showing `NEW`, `RECURRING (first seen: <date>)`, or `RESOLVED`:
+以优先的**操作项**摘要表结束。每个项目必须包含显示 `NEW`、`RECURRING (first seen: <date>)` 或 `RESOLVED` 的 `Status` 列：
 
 ```
 Priority Actions:
@@ -63,15 +63,15 @@ Priority Actions:
 5  | Changed Tag       | Update <command> tag from X to Y      | NEW
 ```
 
-Also include a **Resolved Since Last Run** section listing items from previous runs that are no longer issues.
+还要包含一个**自上次运行以来已解决**部分，列出之前运行中不再是问题的任何项目。
 
 ---
 
-## Phase 3.5: Append Summary to Changelog
+## 阶段 3.5：将摘要追加到变更日志
 
-**This phase is MANDATORY — always execute it before presenting the report to the user.**
+**此阶段是强制的 — 在向用户呈现报告之前始终执行。**
 
-Read the existing `changelog/best-practice/claude-commands/changelog.md` file, then **append** (do NOT overwrite) a new entry at the end. The entry format must be exactly:
+读取现有的 `changelog/best-practice/claude-commands/changelog.md` 文件，然后**追加**（不要覆盖）一个新条目在末尾。条目格式必须完全如下：
 
 ```markdown
 ---
@@ -84,57 +84,57 @@ Read the existing `changelog/best-practice/claude-commands/changelog.md` file, t
 | ... | ... | ... | ... | ... |
 ```
 
-**Status format — MUST use one of these three formats:**
-- `COMPLETE (reason)` — action was taken and resolved successfully
-- `INVALID (reason)` — finding was incorrect, not applicable, or intentional
-- `ON HOLD (reason)` — action deferred, waiting on external dependency or user decision
+**状态格式 — 必须使用以下三种格式之一：**
+- `COMPLETE (reason)` — 操作已成功完成并解决
+- `INVALID (reason)` — 发现不正确、不适用或是有意为之
+- `ON HOLD (reason)` — 操作推迟，等待外部依赖或用户决定
 
-The `(reason)` is mandatory and must briefly explain what was done or why.
+`(reason)` 是强制的，必须简要解释做了什么或为什么。
 
-**Rules for appending:**
-- Always append — never overwrite or replace previous entries
-- The date and time is when the command is executed in Pakistan Standard Time (PKT, UTC+5); get it by running `TZ=Asia/Karachi date "+%Y-%m-%d %I:%M %p PKT"`. The version comes from agent findings
-- If `changelog/best-practice/claude-commands/changelog.md` doesn't exist or is empty, create it with the Status Legend table (see top of file) then the first entry
-- Each entry is separated by `---`
-- **Only include items with HIGH, MEDIUM, or LOW priority** — omit NONE priority items
-
----
-
-## Phase 3.6: Update Last Updated Badge
-
-**This phase is MANDATORY — always execute it immediately after Phase 3.5, before presenting the report.**
-
-Update the "Last Updated" badge at the top of `best-practice/claude-commands.md`. Run `TZ=Asia/Karachi date "+%b %d, %Y %-I:%M %p PKT"` to get the time, URL-encode it (spaces to `%20`, commas to `%2C`), and replace the date portion in the badge. Also update the Claude Code version in the badge if it has changed.
-
-**Do NOT log badge updates as action items in the changelog or report.** Badge syncing is a routine part of every run, not a finding.
+**追加规则：**
+- 始终追加 — 永不覆盖或替换之前的条目
+- 日期和时间是命令在巴基斯坦标准时间（PKT，UTC+5）执行的时间；通过运行 `TZ=Asia/Karachi date "+%Y-%m-%d %I:%M %p PKT"` 获取。版本来自 agent 发现
+- 如果 `changelog/best-practice/claude-commands/changelog.md` 不存在或为空，创建它并添加状态图例表（参见文件顶部）然后第一个条目
+- 每个条目由 `---` 分隔
+- **只包含 HIGH、MEDIUM 或 LOW 优先级的项目** — 省略 NONE 优先级的项目
 
 ---
 
-## Phase 4: Offer to Take Action
+## 阶段 3.6：更新最后更新徽章
 
-After presenting the report (and confirming both changelog and badge were updated), ask the user:
+**此阶段是强制的 — 始终在阶段 3.5 后立即执行，在呈现报告之前。**
 
-1. **Execute all actions** — Apply all changes
-2. **Execute specific actions** — User picks which numbers to execute
-3. **Just save the report** — No changes
+更新 `best-practice/claude-commands.md` 顶部的"Last Updated"徽章。运行 `TZ=Asia/Karachi date "+%b %d, %Y %-I:%M %p PKT"` 获取时间，URL 编码（空格到 `%20`，逗号到 `%2C`），然后替换徽章中的日期部分。如果徽章中的 Claude Code 版本已更改，也要更新它。
 
-When executing:
-- **New fields**: Add to the Frontmatter Fields table with correct type, required status, and description from the official docs
-- **Removed fields**: Confirm with user before removing
-- **New commands**: Add to the official commands table with correct #, command, tag, and description. Insert in the correct tag group (table is sorted by tag)
-- **Removed commands**: Confirm with user before removing
-- **Changed tags**: Update the command's tag and re-sort if needed
-- After any additions or removals, update the count in the `## Frontmatter Fields (N)` and `## ![Official](...) **(N)**` headings
+**不要将徽章更新记录为变更日志或报告中的操作项。** 徽章同步是每次运行的常规部分，不是发现。
 
 ---
 
-## Critical Rules
+## 阶段 4：提供行动选项
 
-1. **Never guess** versions or dates — use data from the agent
-2. **Cross-reference field counts** — report field count must match official docs
-3. **Cross-reference command counts** — report command count must match official docs
-4. **Don't auto-execute** — always present the report first
-5. **ALWAYS append to changelog** — Phase 3.5 is mandatory. Never skip it. Never overwrite previous entries.
-6. **ALWAYS update the Last Updated badge** — Phase 3.6 is mandatory. Never skip it.
-7. **Compare with previous runs** — read the last 25 entries from the changelog and mark each action item as NEW, RECURRING, or RESOLVED.
-8. **Maintain tag sort order** — the official commands table is sorted by tag (alphabetical), then by command name within each tag group. Preserve this ordering when adding or removing commands.
+在呈现报告后（并确认变更日志和徽章都已更新），询问用户：
+
+1. **执行所有操作** — 应用所有更改
+2. **执行特定操作** — 用户选择要执行哪些编号
+3. **只保存报告** — 不做任何更改
+
+执行时：
+- **新字段**：使用官方文档的正确类型、必需状态和描述添加到 Frontmatter Fields 表
+- **移除的字段**：确认后再移除
+- **新命令**：使用正确的 #、command、tag 和描述添加到 official commands 表。在正确的标签组中插入（表按标签排序）
+- **移除的命令**：确认后再移除
+- **变更的标签**：更新命令的标签并在需要时重新排序
+- 任何添加或移除后，更新 `## Frontmatter Fields (N)` 和 `## ![Official](...) **(N)**` 标题中的计数
+
+---
+
+## 关键规则
+
+1. **永不猜测**版本或日期 — 使用来自 agent 的数据
+2. **交叉引用字段计数** — 报告字段计数必须与官方文档匹配
+3. **交叉引用命令计数** — 报告命令计数必须与官方文档匹配
+4. **不要自动执行** — 始终先呈现报告
+5. **始终追加到变更日志** — 阶段 3.5 是强制的。永不跳过。永不覆盖之前的条目。
+6. **始终更新最后更新徽章** — 阶段 3.6 是强制的。永不跳过。
+7. **与之前的运行比较** — 从变更日志读取最后 25 个条目，并将每个操作项标记为 NEW、RECURRING 或 RESOLVED。
+8. **保持标签排序顺序** — 官方命令表按标签（字母顺序）排序，然后在每个标签组内按命令名称排序。在添加或移除命令时保持此顺序。

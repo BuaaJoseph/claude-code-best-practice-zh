@@ -1,26 +1,26 @@
 ---
-description: Display the current time in Pakistan Standard Time (PKT, UTC+5)
+description: 显示巴基斯坦标准时间（PKT，UTC+5）的当前时间
 ---
 
-# Time Command
+# 时间命令
 
-Display the current date and time in Pakistan Standard Time (PKT, UTC+5).
+显示巴基斯坦标准时间（PKT，UTC+5）的当前日期和时间。
 
-## Instructions
+## 说明
 
-1. Run the following bash command to get the current time in PKT:
+1. 运行以下 bash 命令获取 PKT 当前时间：
    ```
    TZ='Asia/Karachi' date '+%Y-%m-%d %H:%M:%S %Z'
    ```
 
-2. Display the result to the user in this format:
+2. 以以下格式向用户显示结果：
    ```
    Current Time in Pakistan (PKT): YYYY-MM-DD HH:MM:SS PKT
    ```
 
-## Requirements
+## 要求
 
-- Always use the `Asia/Karachi` timezone (UTC+5)
-- Use 24-hour format
-- Include the date alongside the time
-- Keep the output concise
+- 始终使用 `Asia/Karachi` 时区（UTC+5）
+- 使用 24 小时制
+- 包含日期以及时间
+- 保持输出简洁

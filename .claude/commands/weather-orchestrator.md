@@ -1,46 +1,46 @@
 ---
-description: Fetch weather data for Dubai and create an SVG weather card
+description: 获取迪拜天气数据并创建 SVG 天气卡片
 model: haiku
 ---
 
-# Weather Orchestrator Command
+# 天气编排命令
 
-Fetch the current temperature for Dubai, UAE and create a visual SVG weather card.
+获取阿联酋迪拜的当前温度并创建可视化 SVG 天气卡片。
 
-## Workflow
+## 工作流
 
-### Step 1: Ask User Preference
+### 步骤 1：询问用户偏好
 
-Use the AskUserQuestion tool to ask the user whether they want the temperature in Celsius or Fahrenheit.
+使用 AskUserQuestion 工具询问用户希望使用摄氏度还是华氏度。
 
-### Step 2: Fetch Weather Data
+### 步骤 2：获取天气数据
 
-Use the Task tool to invoke the weather agent:
+使用 Task 工具调用天气 agent：
 - subagent_type: weather-agent
-- description: Fetch Dubai weather data
-- prompt: Fetch the current temperature for Dubai, UAE in [unit requested by user]. Return the numeric temperature value and unit. The agent has a preloaded skill (weather-fetcher) that provides the detailed instructions.
+- description: 获取迪拜天气数据
+- prompt: 获取阿联酋迪拜的当前温度（单位由用户选择）。返回数字温度值和单位。该 agent 有一个预加载的 skill（weather-fetcher），提供了详细说明。
 - model: haiku
 
-Wait for the agent to complete and capture the returned temperature value and unit.
+等待 agent 完成并捕获返回的温度值和单位。
 
-### Step 3: Create SVG Weather Card
+### 步骤 3：创建 SVG 天气卡片
 
-Use the Skill tool to invoke the weather-svg-creator skill:
+使用 Skill 工具调用 weather-svg-creator skill：
 - skill: weather-svg-creator
 
-The skill will use the temperature value and unit from Step 2 (available in the current context) to create the SVG card and write output files.
+该 skill 将使用步骤 2 中的温度值和单位（在当前上下文中可用）来创建 SVG 卡片并写入输出文件。
 
-## Critical Requirements
+## 关键要求
 
-1. **Use Task Tool for Agent**: DO NOT use bash commands to invoke agents. You must use the Task tool.
-2. **Use Skill Tool for SVG Creator**: Invoke the SVG creator via the Skill tool, not the Task tool.
-3. **Pass User Preference**: Include the user's temperature unit preference when invoking the agent.
-4. **Sequential Flow**: Complete each step before moving to the next.
+1. **使用 Task 工具调用 Agent**：不要使用 bash 命令调用 agent。必须使用 Task 工具。
+2. **使用 Skill 工具调用 SVG 创建器**：通过 Skill 工具调用 SVG 创建器，而不是 Task 工具。
+3. **传递用户偏好**：在调用 agent 时包含用户的温度单位偏好。
+4. **顺序流程**：在进入下一步之前完成每个步骤。
 
-## Output Summary
+## 输出摘要
 
-Provide a clear summary to the user showing:
-- Temperature unit requested
-- Temperature fetched from Dubai
-- SVG card created at `orchestration-workflow/weather.svg`
-- Summary written to `orchestration-workflow/output.md`
+向用户显示清晰的摘要，包括：
+- 请求的温度单位
+- 从迪拜获取的温度
+- SVG 卡片创建于 `orchestration-workflow/weather.svg`
+- 摘要写入 `orchestration-workflow/output.md`
