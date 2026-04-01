@@ -12,8 +12,8 @@ This document describes the **Command → Agent (with skill) → Skill** orchest
 ## System Overview
 
 The weather system demonstrates two distinct skill patterns within a single orchestration workflow:
-- **Agent Skills** (preloaded): `weather-fetcher` is injected into the `weather-agent` at startup as domain knowledge
-- **Skills** (independent): `weather-svg-creator` is invoked directly by the command via the Skill tool
+- **Agent 技能** (preloaded): `weather-fetcher` is injected into the `weather-agent` at startup as domain knowledge
+- **技能** (independent): `weather-svg-creator` is invoked directly by the command via the Skill tool
 
 This showcases the **Command → Agent → Skill** architecture pattern, where:
 - A command orchestrates the workflow and handles user interaction
@@ -22,7 +22,7 @@ This showcases the **Command → Agent → Skill** architecture pattern, where:
 
 ## Component Summary
 
-| Component | Role | Example |
+| Component | Role | 示例 |
 |-----------|------|---------|
 | **Command** | Entry point, user interaction | [`/weather-orchestrator`](../.claude/commands/weather-orchestrator.md) |
 | **Agent** | Fetches data with preloaded skill (agent skill) | [`weather-agent`](../.claude/agents/weather-agent.md) with [`weather-fetcher`](../.claude/skills/weather-fetcher/SKILL.md) |
@@ -94,7 +94,7 @@ This showcases the **Command → Agent → Skill** architecture pattern, where:
 #### `weather-agent` (Agent)
 - **Location**: `.claude/agents/weather-agent.md`
 - **Purpose**: Fetch weather data using its preloaded skill
-- **Skills**: `weather-fetcher` (preloaded as domain knowledge)
+- **技能**: `weather-fetcher` (preloaded as domain knowledge)
 - **Tools Available**: WebFetch, Read
 - **Model**: sonnet
 - **Color**: green
@@ -138,7 +138,7 @@ The agent has `weather-fetcher` preloaded into its context at startup. It follow
    - SVG card location
    - Output file location
 
-## Example Execution
+## 示例 Execution
 
 ```
 Input: /weather-orchestrator
@@ -180,9 +180,9 @@ skills:
 ---
 ```
 
-- **Skills are preloaded**: Full skill content is injected into agent's context at startup
+- **技能 are preloaded**: Full skill content is injected into agent's context at startup
 - **Agent uses skill knowledge**: Agent follows instructions from preloaded skills
-- **No dynamic invocation**: Skills are reference material, not invoked separately
+- **No dynamic invocation**: 技能 are reference material, not invoked separately
 
 ### Skill (Direct Invocation)
 

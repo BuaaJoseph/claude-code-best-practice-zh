@@ -1,4 +1,4 @@
-# Skills Report Changelog
+# 技能 Report Changelog
 
 **Status Legend:**
 
@@ -12,7 +12,7 @@
 
 ## [2026-03-13 04:22 PM PKT] Claude Code v2.1.74
 
-| # | Priority | Type | Action | Status |
+| # | Priority | 类型 | Action | Status |
 |---|----------|------|--------|--------|
 | 1 | MED | Extra Bundled Skill | `keybindings-help` is in local report but absent from official docs bundled skills list — investigate whether to remove or keep | ✅ COMPLETE (removed from bundled skills table — it is a local custom skill in this repo, not an official bundled skill; `/keybindings` is a built-in CLI command) |
 
@@ -20,9 +20,9 @@
 
 ## [2026-03-15 12:49 PM PKT] Claude Code v2.1.76
 
-| # | Priority | Type | Action | Status |
+| # | Priority | 类型 | Action | Status |
 |---|----------|------|--------|--------|
-| 1 | LOW | Field Accuracy | `name` field Required column reads "Recommended" in local report but official docs now list it as "No" (optional) — update to match | ✅ COMPLETE (updated `name` Required from "Recommended" to "No" to match official docs) |
+| 1 | LOW | Field Accuracy | `name` field 必填 column reads "Recommended" in local report but official docs now list it as "No" (optional) — update to match | ✅ COMPLETE (updated `name` 必填 from "Recommended" to "No" to match official docs) |
 
 ---
 
@@ -70,7 +70,7 @@ No drift detected — frontmatter fields (11) and bundled skills (5) are fully s
 
 ## [2026-03-26 12:59 PM PKT] Claude Code v2.1.84
 
-| # | Priority | Type | Action | Status |
+| # | Priority | 类型 | Action | Status |
 |---|----------|------|--------|--------|
 | 1 | HIGH | New Field | Add `shell` field to frontmatter table — accepts `bash` (default) or `powershell`, controls shell for `!command` blocks in skill content | ✅ COMPLETE (added to frontmatter table, count updated 11→12) |
 
@@ -78,7 +78,7 @@ No drift detected — frontmatter fields (11) and bundled skills (5) are fully s
 
 ## [2026-03-27 06:25 PM PKT] Claude Code v2.1.85
 
-| # | Priority | Type | Action | Status |
+| # | Priority | 类型 | Action | Status |
 |---|----------|------|--------|--------|
 | 1 | HIGH | New Field | Add `paths` field to frontmatter table — accepts glob patterns (string or YAML list) that limit when a skill auto-activates | ✅ COMPLETE (added to frontmatter table, count updated 12→13) |
 

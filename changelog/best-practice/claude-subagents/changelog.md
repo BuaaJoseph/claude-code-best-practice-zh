@@ -1,4 +1,4 @@
-# Subagents Report — Changelog History
+# 子代理 Report — Changelog History
 
 ## Status Legend
 
@@ -12,7 +12,7 @@
 
 ## [2026-02-28 03:22 PM PKT] Claude Code v2.1.63
 
-| # | Priority | Type | Action | Status |
+| # | Priority | 类型 | Action | Status |
 |---|----------|------|--------|--------|
 | 1 | HIGH | Agents Table | Add `workflow-changelog-claude-agents-frontmatter-agent` to Agents in This Repository table | ✅ COMPLETE (added with model: opus, inherits all tools, no skills/memory) |
 | 2 | HIGH | Agents Table | Fix presentation-curator skills column — add `presentation/` prefix to skill names | ✅ COMPLETE (updated to presentation/vibe-to-agentic-framework etc.) |
@@ -23,12 +23,12 @@
 
 ## [2026-03-07 08:35 AM PKT] Claude Code v2.1.71
 
-| # | Priority | Type | Action | Status |
+| # | Priority | 类型 | Action | Status |
 |---|----------|------|--------|--------|
 | 1 | HIGH | Broken Link | Fix agent memory link to `reports/claude-agent-memory.md` | ✅ COMPLETE |
 | 2 | HIGH | Changed Behavior | Update `tools` field description: `Task(agent_type)` → `Agent(agent_type)` (v2.1.63 rename) | ✅ COMPLETE |
 | 3 | HIGH | Changed Behavior | Update invocation section: Task tool → Agent tool (v2.1.63 rename) | ✅ COMPLETE (updated heading, code example, and added rename note) |
-| 4 | HIGH | Example Update | Update full-featured example: `Task(monitor, rollback)` → `Agent(monitor, rollback)` | ✅ COMPLETE |
+| 4 | HIGH | 示例 Update | Update full-featured example: `Task(monitor, rollback)` → `Agent(monitor, rollback)` | ✅ COMPLETE |
 | 5 | HIGH | Built-in Agent | Add `Bash` agent to Official Claude Agents table (model: inherit, purpose: terminal commands in separate context) | ✅ COMPLETE (added to table) |
 | 6 | HIGH | Agents Table | Add `workflow-concepts-agent` to Agents in This Repository table (model: opus, color: green) | ✅ COMPLETE |
 | 7 | HIGH | Agents Table | Add `workflow-claude-settings-agent` to Agents in This Repository table (model: opus, color: yellow) | ✅ COMPLETE |
@@ -79,7 +79,7 @@ No drift detected — report is fully in sync with official docs. All 13 frontma
 
 ## [2026-03-20 08:35 AM PKT] Claude Code v2.1.80
 
-| # | Priority | Type | Action | Status |
+| # | Priority | 类型 | Action | Status |
 |---|----------|------|--------|--------|
 | 1 | HIGH | New Field | Add `effort` field to Frontmatter Fields table (string, optional — effort level override: `low`, `medium`, `high`, `max`) | ✅ COMPLETE (added between `background` and `isolation`, count updated 14→15) |
 
@@ -107,7 +107,7 @@ No drift detected — report is fully in sync with official docs. All 15 frontma
 
 ## [2026-03-26 01:01 PM PKT] Claude Code v2.1.84
 
-| # | Priority | Type | Action | Status |
+| # | Priority | 类型 | Action | Status |
 |---|----------|------|--------|--------|
 | 1 | HIGH | New Field | Add `initialPrompt` to Frontmatter Fields table (string, optional — auto-submitted as first user turn when agent runs as main session agent via `--agent` or `agent` setting) | ✅ COMPLETE (added between `isolation` and `color`, count updated 15→16) |
 
