@@ -26,9 +26,12 @@
       name: 'Claude Code 最佳实践',
       repo: 'https://github.com/BuaaJoseph/claude-code-best-practice-zh',
       loadSidebar: true,
-      relativePath: true,
+      sidebarDisplayLevel: 1,
       subMaxLevel: 3,
       auto2top: true,
+      notFoundPage: {
+        '/': 'README.md'
+      },
       search: {
         maxAge: 86400000,
         paths: 'auto',
@@ -47,8 +50,8 @@
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docsify-search/dist/docsify-search.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-pagination@2/dist/docsify-pagination.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@2/dist/docsify-copy-code.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-search@1/dist/docsify-search.min.js"></script>
 </body>
 </html>
